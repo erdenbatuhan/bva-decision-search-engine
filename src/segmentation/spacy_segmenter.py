@@ -1,3 +1,8 @@
+"""
+ File:   spacy_segmenter.py
+ Author: Batuhan Erden
+"""
+
 import spacy
 
 from src.segmentation.segmenter import Segmenter
