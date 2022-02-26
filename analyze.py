@@ -28,6 +28,6 @@ if __name__ == "__main__":
     assert len(sys.argv) == 2, "Pass the path to the text file containing a BVA decision => " \
                                "$ python analyze.py <path to txt file>"
 
-    # Run analyze with the filepath provided
+    # Run analyze
     analyze()
 
