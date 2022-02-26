@@ -7,6 +7,7 @@ import numpy as np
 
 
 class Segmenter:
+
     MAX_MATCHING_DIST = 3
 
     def __init__(self, corpus):
