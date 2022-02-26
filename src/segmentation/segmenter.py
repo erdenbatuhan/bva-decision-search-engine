@@ -42,7 +42,7 @@ class Segmenter:
             start_diff = abs(true_start - generated_start)
             end_diff = abs(true_end - generated_end)
 
-            Match found if both are smaller than MAX_MATCHING_DIST!
+            Match found if both are smaller than or equal to MAX_MATCHING_DIST!
 
         :param true_splits: True splits from Corpus
         :param generated_splits: Generated splits from generates sentences by Spacy
@@ -54,13 +54,13 @@ class Segmenter:
         # Compare true and generated splits
         for i in range(min(len(true_splits), len(generated_splits))):
             start_diff, end_diff = abs(np.array(true_splits[i]) - np.array(generated_splits[i]))
-            match_found = start_diff < self.MAX_MATCHING_DIST and end_diff < self.MAX_MATCHING_DIST
+            match_found = start_diff <= self.MAX_MATCHING_DIST and end_diff <= self.MAX_MATCHING_DIST
 
             true_positives += match_found
             false_negatives += not match_found
             false_positives += not match_found
 
-        # Add the number of unmatched to false negatives or false positives depending on the bigger list
+        # Add the number of "unmatched" to false negatives or false positives depending on the bigger list
         false_negatives += max(0, len(true_splits) - len(generated_splits))
         false_positives += max(0, len(generated_splits) - len(true_splits))
 
@@ -112,6 +112,7 @@ class Segmenter:
         :param name: Name of the segmenter
         :param generated_sentences_by_document: Generated sentences by document
         """
+
         split_scores = self.calculate_split_scores(generated_sentences_by_document)
 
         print("===========================================================================\n" +
