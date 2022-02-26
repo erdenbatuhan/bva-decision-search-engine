@@ -31,12 +31,12 @@ class SentenceSegmenter:
 
         for document_id, true_splits in true_splits_by_document.items():
             generated_splits = [
-                (sentence.start, sentence.end) for sentence in generated_sentences_by_document[document_id]
+                (sentence.start_char, sentence.end_char) for sentence in generated_sentences_by_document[document_id]
             ]
 
             for i in range(min(len(true_splits), len(generated_splits))):
-                start_diff, end_diff = np.array(true_splits[i]) - np.array(generated_splits[i])
-                match_found = abs(end_diff - start_diff) < self.MAX_MATCHING_DIST
+                start_diff, end_diff = abs(np.array(true_splits[i]) - np.array(generated_splits[i]))
+                match_found = start_diff < self.MAX_MATCHING_DIST and end_diff < self.MAX_MATCHING_DIST
 
                 true_positives += match_found
                 false_negatives += not match_found
