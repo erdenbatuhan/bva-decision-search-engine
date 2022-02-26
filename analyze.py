@@ -5,8 +5,8 @@
 
 import sys
 
-from src.models.corpus import Corpus
-from src.models.sentence_segmenter import SentenceSegmenter
+from src.corpus import Corpus
+from src.segmentation.spacy_segmenter import SpacySegmenter
 
 
 def analyze(corpus_fpath="./data/ldsi_w21_curated_annotations_v2.json"):
@@ -29,13 +29,14 @@ def analyze(corpus_fpath="./data/ldsi_w21_curated_annotations_v2.json"):
     Step 2: Sentence Segmentation
     ====================================
     """
-    sentence_segmenter = SentenceSegmenter(corpus=corpus)
+    naive_spacy_segmenter = SpacySegmenter(corpus=corpus)
+    improved_spacy_segmenter = SpacySegmenter(corpus=corpus, improved=True)
 
     # Step 2.1: Standard segmentation analysis
-    sentence_segmenter.spacy_segmentation_naive(error_analysis=True)
+    naive_spacy_segmenter.apply_segmentation()
 
     # Step 2.2: Improved segmentation analysis
-    sentence_segmenter.spacy_segmentation_improved(error_analysis=True)
+    improved_spacy_segmenter.apply_segmentation()
 
     """
     ====================================

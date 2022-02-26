@@ -136,27 +136,6 @@ class Corpus:
         return train_spans, val_spans, test_spans
 
     @staticmethod
-    def get_true_splits_by_document(spans):
-        """
-        Gets true splits by document given spans
-
-        :param spans: Spans given
-        :return: True splits by document given spans
-        """
-
-        true_splits_by_document = {}
-
-        for span in spans:
-            document_id = span["document"]
-
-            if document_id not in true_splits_by_document:
-                true_splits_by_document[document_id] = []
-
-            true_splits_by_document[document_id].append((span["start"], span["end"]))
-
-        return true_splits_by_document
-
-    @staticmethod
     def get_documents_split(spans):
         """
         Gets distinct documents given spans
@@ -175,5 +154,5 @@ class Corpus:
                "Corpus summary:\n" + \
                "===========================================================================\n" + \
                "Validation set: %s\nTest set: %s" % (val_documents, test_documents) + "\n" + \
-               "==========================================================================="
+               "===========================================================================\n"
 
