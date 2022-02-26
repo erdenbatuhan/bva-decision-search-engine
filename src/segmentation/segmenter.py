@@ -70,7 +70,7 @@ class Segmenter:
         """
         Compares the generated splits with true splits and calculates the scores
 
-        - True Positive when true and generated splits are "matched" if they are within 3 characters of each other
+        - True Positive when true and generated splits are "matched" being within MAX_MATCHING_DIST chars of each other
         - Unmatched true splits are false negatives
         - Unmatched generated splits are false positives
 
