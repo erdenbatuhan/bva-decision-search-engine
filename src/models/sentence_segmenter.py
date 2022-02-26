@@ -34,12 +34,11 @@ class SentenceSegmenter:
 
             for i in range(min(len(true_splits), len(generated_splits))):
                 start_diff, end_diff = np.array(true_splits[i]) - np.array(generated_splits[i])
+                match_found = abs(end_diff - start_diff) < 3
 
-                if abs(end_diff - start_diff) < 3:
-                    true_positives += 1
-                else:
-                    false_negatives += 1
-                    false_positives += 1
+                true_positives += match_found
+                false_negatives += not match_found
+                false_positives += not match_found
 
             false_negatives += max(0, len(true_splits) - len(generated_splits))
             false_positives += max(0, len(generated_splits) - len(true_splits))
