@@ -1,3 +1,8 @@
+"""
+ File:   plotting_utils.py
+ Author: Batuhan Erden
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 

@@ -1,6 +1,11 @@
+"""
+ File:   corpus.py
+ Author: Batuhan Erden
+"""
+
 import json
 
-import data_utils
+from src.utils import data_utils
 
 
 class Corpus:
@@ -85,6 +90,8 @@ class Corpus:
 
         # Create span data for each annotated document
         for document_id in annotated_document_ids:
+            document_span_data = []
+
             document = self.annotated_documents_by_id[document_id]
             annotations = self.annotations_by_document[document_id]
 
@@ -92,7 +99,7 @@ class Corpus:
                 annotation_start = annotation["start"]
                 annotation_end = annotation["end"]
 
-                span_data.append({
+                document_span_data.append({
                     "txt": document["plainText"][annotation_start:annotation_end],
                     "document": document_id,
                     "type": self.types_by_id[annotation["type"]]["name"],
@@ -101,6 +108,9 @@ class Corpus:
                     "end": annotation_end,
                     "outcome": document["outcome"]
                 })
+
+            # Sort document span data by annotation start
+            span_data += sorted(document_span_data, key=lambda span: span["start"])
 
         return span_data
 
@@ -125,9 +135,41 @@ class Corpus:
 
         return train_spans, val_spans, test_spans
 
+    @staticmethod
+    def get_true_splits_by_document(spans):
+        """
+        Gets true splits by document given spans
+
+        :param spans: Spans given
+        :return: True splits by document given spans
+        """
+
+        true_splits_by_document = {}
+
+        for span in spans:
+            document_id = span["document"]
+
+            if document_id not in true_splits_by_document:
+                true_splits_by_document[document_id] = []
+
+            true_splits_by_document[document_id].append((span["start"], span["end"]))
+
+        return true_splits_by_document
+
+    @staticmethod
+    def get_documents_split(spans):
+        """
+        Gets distinct documents given spans
+
+        :param spans: Spans given
+        :return: Distinct documents given spans
+        """
+
+        return list(set([span["document"] for span in spans]))
+
     def __str__(self):
-        val_documents = list(set([span["document"] for span in self.val_spans]))
-        test_documents = list(set([span["document"] for span in self.test_spans]))
+        val_documents = self.get_documents_split(self.val_spans)
+        test_documents = self.get_documents_split(self.test_spans)
 
         return "===========================================================================\n" + \
                "Corpus summary:\n" + \
