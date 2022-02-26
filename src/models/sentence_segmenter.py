@@ -9,6 +9,8 @@ import spacy
 
 class SentenceSegmenter:
 
+    MAX_MATCHING_DIST = 3
+
     def __init__(self, corpus):
         self.corpus = corpus
 
@@ -34,7 +36,7 @@ class SentenceSegmenter:
 
             for i in range(min(len(true_splits), len(generated_splits))):
                 start_diff, end_diff = np.array(true_splits[i]) - np.array(generated_splits[i])
-                match_found = abs(end_diff - start_diff) < 3
+                match_found = abs(end_diff - start_diff) < self.MAX_MATCHING_DIST
 
                 true_positives += match_found
                 false_negatives += not match_found
