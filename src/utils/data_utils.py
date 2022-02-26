@@ -15,6 +15,7 @@ def split_data_balanced(inputs, type_key, val_test_size=.1):
     :param val_test_size: Percentage of the validation and test data size
     :return: Tuple containing the training, validation and test data
     """
+
     distinct_types = set([item[type_key] for _, item in inputs.items()])
     inputs_by_type = {distinct_type: [] for distinct_type in distinct_types}
 

@@ -15,6 +15,7 @@ def plot_confusion_matrix(y_true, y_pred, classes, title=None, cmap=plt.cm.Blues
 
     Referenced from: https://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
     """
+
     cm = confusion_matrix(y_true, y_pred)
     fig, ax = plt.subplots(figsize=(8, 8))
     im = ax.imshow(cm, interpolation="nearest", cmap=cmap)
