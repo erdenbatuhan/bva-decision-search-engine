@@ -24,10 +24,17 @@ class SpacySegmenter(Segmenter):
     def extend_language(self):
         """
         Introduces additional exceptions/extensions to the language/segmenter
+
+        (1) Handles special legal words:
+            'Vet. App.', 'Fed. Cir.', 'Fed. Reg.', 'Pub. L. No.', 'DOCKET NO.', '), DATE))', 'non-Federal', 'CF. 38'
+        (2) Handles commas and semicolons after closed parenthesis: (2004), and (2004);
         """
 
-        # TODO: Add some constraints here
-        pass
+        # Handle special legal words (1) and commas and semicolons after closed parenthesis (2)
+        for word in [
+            'Vet. App.', 'Fed. Cir.', 'Fed. Reg.', 'Pub. L. No.', 'DOCKET NO.', ')DATE))', 'non-Federal', 'Cf. 38'
+        ] + ["), ", "); "]:
+            self.nlp.tokenizer.add_special_case(word, [{"ORTH": word}])
 
     def apply_segmentation(self):
         """

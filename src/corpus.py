@@ -10,6 +10,8 @@ from src.utils import data_utils
 
 class Corpus:
 
+    CASE_HEADER_TYPE = "Header"
+
     def __init__(self, corpus_fpath):
         # Load corpus data
         self.annotated_documents_by_id, self.annotations_by_document, self.types_by_id = \
@@ -145,6 +147,17 @@ class Corpus:
         """
 
         return list(set([span["document"] for span in spans]))
+
+    def get_distinct_headers(self, spans):
+        """
+        Returns distinct headers (e.g. "INTRODUCTION", "REPRESENTATION", etc.)
+
+        :return: Distinct headers
+        """
+        return list(set([
+            span["txt"] for span in spans
+            if span["type"] == self.CASE_HEADER_TYPE
+        ]))
 
     def __str__(self):
         val_documents = self.get_documents_split(self.val_spans)

@@ -29,13 +29,12 @@ def analyze(corpus_fpath="./data/ldsi_w21_curated_annotations_v2.json"):
     Step 2: Sentence Segmentation
     ====================================
     """
-    naive_spacy_segmenter = SpacySegmenter(corpus=corpus)
-    improved_spacy_segmenter = SpacySegmenter(corpus=corpus, improved=True)
-
-    # Step 2.1: Standard segmentation analysis
-    naive_spacy_segmenter.apply_segmentation()
+    # # Step 2.1: Standard segmentation analysis
+    # naive_spacy_segmenter = SpacySegmenter(corpus=corpus)
+    # naive_spacy_segmenter.apply_segmentation()
 
     # Step 2.2: Improved segmentation analysis
+    improved_spacy_segmenter = SpacySegmenter(corpus=corpus, improved=True)
     improved_spacy_segmenter.apply_segmentation()
 
     """
