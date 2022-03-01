@@ -34,7 +34,7 @@ class Segmenter:
 
         return true_splits_by_document
 
-    def compare_splits(self, true_splits, generated_splits):
+    def compare_splits(self, true_splits, generated_splits, deep_compare=False):
         """
         Compares splits
 
@@ -46,6 +46,7 @@ class Segmenter:
 
         :param true_splits: True splits from Corpus
         :param generated_splits: Generated splits from generates sentences by Spacy
+        :param deep_compare: With the setting "false", only the difference of the start indices is compared!
         :return: A tuple containing the scores (true positives, false negatives, false positives)
         """
 
@@ -55,6 +56,9 @@ class Segmenter:
         for true_split in true_splits:
             for generated_split in generated_splits:
                 start_diff, end_diff = abs(np.array(true_split) - np.array(generated_split))
+
+                if not deep_compare:  # Disable the comparison of the difference of the end indices
+                    end_diff = self.MAX_MATCHING_DIST
 
                 if start_diff <= self.MAX_MATCHING_DIST and end_diff <= self.MAX_MATCHING_DIST:  # Match found!
                     true_positives += 1
@@ -120,7 +124,7 @@ class Segmenter:
 
             # Compare splits for current document
             true_positives, false_negatives, false_positives = \
-                self.compare_splits(true_splits, generated_splits)
+                self.compare_splits(true_splits, generated_splits, True)
 
             # Calculate measured scores
             precision, recall, f1_score = self.calculate_measurement_scores(
