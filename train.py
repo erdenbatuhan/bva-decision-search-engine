@@ -47,7 +47,7 @@ def train(annotations_filepath, unlabeled_data_dir):
 
     # Apply each segmentation and analyze the errors
     for segmenter in segmenters.values():
-        segmenter.apply_segmentation()
+        segmenter.apply_segmentation(annotated=True, debug=True)
 
     """
     ====================================
