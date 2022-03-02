@@ -13,9 +13,6 @@ from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
 from src.tokenizer import Tokenizer
 
 
-OUT_DIRECTORY = "./out/"
-
-
 def initialize_corpus(annotations_filepath, unlabeled_data_dir):
     """
     Step 1: Corpus Initialization & Dataset Splitting
@@ -60,23 +57,15 @@ def initialize_segmenters(corpus, debug=False):
     return segmenters
 
 
-def preprocess_data(segmenter=None, use_pre_split_sentences=True):
+def preprocess_data(segmenter):
     """
     Step 3: Preprocessing (Tokenization)
 
-    :param segmenter: Segmenter used (Will not be used if use_pre_split_sentences is set to True)
-    :param use_pre_split_sentences: Whether the pre-split sentences are used or new ones are generated
+    :param segmenter: Segmenter used
     """
 
-    # TODO: Read pre-split sentences
-    if use_pre_split_sentences:
-        # pre_split_sentence_dir = OUT_DIRECTORY + "unlabeled.txt"
-        sentences = None
-    else:
-        sentences = segmenter.apply_segmentation(annotated=False, debug=False).values()
-
-    # Initialize the tokenizer
-    tokenizer = Tokenizer(sentences)
+    # Initialize the tokenizer with Luima segmenter
+    tokenizer = Tokenizer(segmenter)
 
 
 def train_word_embeddings():

@@ -7,6 +7,8 @@ import datetime
 from abc import abstractmethod
 import numpy as np
 
+from src.utils.logging_utils import log
+
 
 class Segmenter:
 
@@ -241,7 +243,7 @@ class Segmenter:
         if annotated and debug:
             self.analyze_segmentation(generated_sentences_by_document, duration)
         else:
-            print("The segmentation process took %s." % duration)
+            log("The segmentation process took %s." % duration)
 
         # Return the resulting segmentation
         return generated_sentences_by_document
