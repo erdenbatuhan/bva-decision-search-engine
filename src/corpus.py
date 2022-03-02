@@ -4,6 +4,7 @@
 """
 
 import json
+import glob
 
 from src.utils import data_utils
 
@@ -12,10 +13,13 @@ class Corpus:
 
     CASE_HEADER_TYPE = "Header"
 
-    def __init__(self, corpus_fpath):
-        # Load corpus data
+    def __init__(self, annotations_filepath, unlabeled_data_dir):
+        # Load labeled data
         self.annotated_documents_by_id, self.annotations_by_document, self.types_by_id = \
-            self.load_corpus_data(corpus_fpath)
+            self.load_labeled_data(annotations_filepath)
+
+        # Read unlabeled data
+        self.unlabeled_data = self.load_unlabeled_data(unlabeled_data_dir)
 
         # Create balanced split spans
         self.train_spans, self.val_spans, self.test_spans = self.create_balanced_span_splits()
@@ -59,16 +63,16 @@ class Corpus:
 
         return annotations_by_document
 
-    def load_corpus_data(self, corpus_fpath):
+    def load_labeled_data(self, annotations_filepath):
         """
-        Loads corpus data
+        Loads the labeled data with annotations
 
-        :param corpus_fpath: The path of the corpus data
+        :param annotations_filepath: Path to the file containing the annotations
         :return: A tuple containing the data (annotated_documents_by_id, annotations_by_document, types_by_id)
         """
 
         # Load data
-        data = json.load(open(corpus_fpath))
+        data = json.load(open(annotations_filepath))
 
         # Distribute the data into dictionaries
         documents_by_id = {d["_id"]: d for d in data["documents"]}
@@ -79,6 +83,23 @@ class Corpus:
         annotations_by_document = self.create_annotations_by_document(data["annotations"])
 
         return annotated_documents_by_id, annotations_by_document, types_by_id
+
+    @staticmethod
+    def load_unlabeled_data(unlabeled_data_dir):
+        """
+        Reads unlabeled data
+
+        :param unlabeled_data_dir: Directory containing the unlabeled data
+        :return: Unlabeled data
+        """
+        unlabeled = {}
+
+        # Read the unlabeled data
+        for file in glob.glob(unlabeled_data_dir + "*.txt"):
+            with open(file, encoding="latin-1") as data:
+                unlabeled[file] = data.read()
+
+        return unlabeled
 
     def create_span_data(self, annotated_document_ids):
         """
@@ -147,6 +168,19 @@ class Corpus:
         """
 
         return list(set([span["document"] for span in spans]))
+
+    def get_plain_texts_by_annotated_document(self, spans):
+        """
+        Gets the plain text of each annotated document
+
+        :param spans: Spans (train, test or validation)
+        :return: The plain text of each annotated document
+        """
+
+        return {
+            document_id: self.annotated_documents_by_id[document_id]["plainText"]
+            for document_id in self.get_documents_split(spans)
+        }
 
     def get_distinct_headers(self, spans):
         """

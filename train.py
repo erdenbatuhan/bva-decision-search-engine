@@ -6,23 +6,28 @@
 import sys
 
 from src.corpus import Corpus
+
 from src.segmentation.spacy_segmenter import SpacySegmenter
 from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
 
+from src.tokenizer import Tokenizer
 
-def train(corpus_fpath):
+
+def train(annotations_filepath, unlabeled_data_dir):
     """
     Analyzes multiple methods to achieve the best performance
 
-    :param corpus_fpath: Path to the file containing the annotations
+    :param annotations_filepath: Path to the file containing the annotations
+    :param unlabeled_data_dir: Directory containing the unlabeled data
     """
 
     """
     ====================================
-    Step 1: Initialize Corpus & Dataset Splitting
+    Step 1: Initialize the Corpus & Dataset Splitting
     ====================================
     """
-    corpus = Corpus(corpus_fpath=corpus_fpath)
+    # Initialize the Corpus
+    corpus = Corpus(annotations_filepath, unlabeled_data_dir)
     print(corpus)
 
     """
@@ -30,24 +35,27 @@ def train(corpus_fpath):
     Step 2: Sentence Segmentation
     ====================================
     """
-    # Step 2.1: Standard segmentation analysis
-    # naive_spacy_segmenter = SpacySegmenter(corpus=corpus)
-    # naive_spacy_segmenter.apply_segmentation()
+    # Initialize the segmenters
+    segmenters = {
+        # Step 2.1: Standard segmentation analysis
+        "NaiveSpacySegmenter": SpacySegmenter(corpus=corpus),
+        # Step 2.2: Improved segmentation analysis
+        "ImprovedSpacySegmenter": SpacySegmenter(corpus=corpus, improved=True),
+        # Step 2.3: Luima (A law-specific sentence segmenter)
+        "LuimaLawSegmenter": LuimaLawSegmenter(corpus=corpus)
+    }
 
-    # Step 2.2: Improved segmentation analysis
-    # improved_spacy_segmenter = SpacySegmenter(corpus=corpus, improved=True)
-    # improved_spacy_segmenter.apply_segmentation()
-
-    # Step 2.2: Improved segmentation analysis
-    luima_law_segmenter = LuimaLawSegmenter(corpus=corpus)
-    luima_law_segmenter.apply_segmentation()
+    # Apply each segmentation and analyze the errors
+    for segmenter in segmenters.values():
+        segmenter.apply_segmentation()
 
     """
     ====================================
     Step 3: Preprocessing
     ====================================
     """
-    pass
+    # Initialize the tokenizer with Luima segmenter
+    tokenizer = Tokenizer(segmenter=segmenters["LuimaLawSegmenter"])
 
     """
     ====================================
@@ -72,9 +80,11 @@ def train(corpus_fpath):
 
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 2, "Pass the path to the file containing the annotations => " \
-                               "$ python train.py <path to annotations file>"
+    assert len(sys.argv) == 3, "Pass the path to the file containing the annotations and " \
+                               "the directory with the unlabeled data => " \
+                               "$ python train.py " \
+                               "<path to annotations file> <path to directory containing unlabeled data>"
 
     # Run train
-    train(corpus_fpath=sys.argv[1])
+    train(annotations_filepath=sys.argv[1], unlabeled_data_dir=sys.argv[2])
 
