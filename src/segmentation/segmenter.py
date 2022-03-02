@@ -16,6 +16,11 @@ class Segmenter:
         self.name = name
         self.corpus = corpus
 
+        # Metrics related to error analysis
+        self.error_analysis_metrics = {
+            "deep_compare": True  # With the setting "false", only the difference of the start indices is compared!
+        }
+
     def get_plain_texts_by_document(self, annotated=True):
         """
         Returns the plain texts from annotated or unannotated documents
@@ -63,7 +68,7 @@ class Segmenter:
 
         return true_splits_by_document
 
-    def compare_splits(self, true_splits, generated_splits, deep_compare=False):
+    def compare_splits(self, true_splits, generated_splits):
         """
         Compares splits
 
@@ -75,7 +80,6 @@ class Segmenter:
 
         :param true_splits: True splits from Corpus
         :param generated_splits: Generated splits from generates sentences by Spacy
-        :param deep_compare: With the setting "false", only the difference of the start indices is compared!
         :return: A tuple containing the scores (true positives, false negatives, false positives)
         """
 
@@ -86,7 +90,8 @@ class Segmenter:
             for generated_split in generated_splits:
                 start_diff, end_diff = abs(np.array(true_split) - np.array(generated_split))
 
-                if not deep_compare:  # Disable the comparison of the difference of the end indices
+                # Disable the comparison of the difference of the end indices
+                if not self.error_analysis_metrics["deep_compare"]:
                     end_diff = self.MAX_MATCHING_DIST
 
                 if start_diff <= self.MAX_MATCHING_DIST and end_diff <= self.MAX_MATCHING_DIST:  # Match found!
@@ -139,8 +144,7 @@ class Segmenter:
             ]
 
             # Compare splits for current document
-            true_positives, false_negatives, false_positives = \
-                self.compare_splits(true_splits, generated_splits, deep_compare=True)
+            true_positives, false_negatives, false_positives = self.compare_splits(true_splits, generated_splits)
 
             # Calculate measured scores
             precision, recall, f1_score = self.calculate_measurement_scores(
@@ -210,7 +214,7 @@ class Segmenter:
               "The %s worst performing document(s) in terms of score: %s\n" % (
                   len(worst_scores), [document_id for document_id in worst_scores]) +
               ("The segmentation process took %s.\n" % duration) +
-              "===========================================================================\n")
+              "===========================================================================")
 
     def apply_segmentation(self, annotated=True, debug=False):
         """
@@ -237,7 +241,7 @@ class Segmenter:
         if annotated and debug:
             self.analyze_segmentation(generated_sentences_by_document, duration)
         else:
-            print("The segmentation process took %s.\n" % duration)
+            print("The segmentation process took %s." % duration)
 
         # Return the resulting segmentation
         return generated_sentences_by_document
