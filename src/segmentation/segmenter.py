@@ -119,7 +119,8 @@ class Segmenter:
         for document_id, true_splits in true_splits_by_document.items():
             # Get the generated splits (starts and ends) from generated sentences
             generated_splits = [
-                (sentence.start_char, sentence.end_char) for sentence in generated_sentences_by_document[document_id]
+                (sentence["start_char"], sentence["end_char"])
+                for sentence in generated_sentences_by_document[document_id]
             ]
 
             # Compare splits for current document

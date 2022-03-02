@@ -7,6 +7,7 @@ import sys
 
 from src.corpus import Corpus
 from src.segmentation.spacy_segmenter import SpacySegmenter
+from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
 
 
 def analyze(corpus_fpath="./data/ldsi_w21_curated_annotations_v2.json"):
@@ -34,8 +35,12 @@ def analyze(corpus_fpath="./data/ldsi_w21_curated_annotations_v2.json"):
     # naive_spacy_segmenter.apply_segmentation()
 
     # Step 2.2: Improved segmentation analysis
-    improved_spacy_segmenter = SpacySegmenter(corpus=corpus, improved=True)
-    improved_spacy_segmenter.apply_segmentation()
+    # improved_spacy_segmenter = SpacySegmenter(corpus=corpus, improved=True)
+    # improved_spacy_segmenter.apply_segmentation()
+
+    # Step 2.2: Improved segmentation analysis
+    luima_law_segmenter = LuimaLawSegmenter(corpus=corpus)
+    luima_law_segmenter.apply_segmentation()
 
     """
     ====================================
