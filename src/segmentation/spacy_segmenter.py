@@ -36,6 +36,25 @@ class SpacySegmenter(Segmenter):
         ] + ["), ", "); "]:
             self.nlp.tokenizer.add_special_case(word, [{"ORTH": word}])
 
+    def generate_sentences(self, document_id):
+        """
+        Generates sentences from a document using Spacy
+
+        :param document_id: Document ID
+        :return: Sentences generated from a document by Spacy
+        """
+
+        plain_text = self.corpus.annotated_documents_by_id[document_id]["plainText"]
+
+        return [
+            {
+                "text": sentence.text,
+                "start_char": sentence.start_char,
+                "end_char": sentence.end_char,
+            }
+            for sentence in self.nlp(plain_text).sents
+        ]
+
     def apply_segmentation(self):
         """
         Generates sentences using Spacy
@@ -45,7 +64,7 @@ class SpacySegmenter(Segmenter):
 
         # Generate Spacy sentences
         generated_sentences_by_document = {
-            document_id: list(self.nlp(self.corpus.annotated_documents_by_id[document_id]["plainText"]).sents)
+            document_id: self.generate_sentences(document_id)
             for document_id in self.corpus.get_documents_split(self.corpus.train_spans)
         }
 

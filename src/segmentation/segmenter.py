@@ -65,20 +65,6 @@ class Segmenter:
                     break
 
         false_negatives, false_positives = len(true_splits) - true_positives, len(generated_splits) - true_positives
-
-        # # TODO: The following code should work, but there is a mistake! Try to replace the code block above with this..
-        # for i in range(min(len(true_splits), len(generated_splits))):
-        #     start_diff, end_diff = abs(np.array(true_splits[i]) - np.array(generated_splits[i]))
-        #     match_found = start_diff <= self.MAX_MATCHING_DIST and end_diff <= self.MAX_MATCHING_DIST
-        #
-        #     true_positives += match_found
-        #     false_negatives += not match_found
-        #     false_positives += not match_found
-        #
-        # # Add the number of "unmatched" to false negatives or false positives depending on the bigger list
-        # false_negatives += max(0, len(true_splits) - len(generated_splits))
-        # false_positives += max(0, len(generated_splits) - len(true_splits))
-
         return true_positives, false_negatives, false_positives
 
     @staticmethod
@@ -125,7 +111,7 @@ class Segmenter:
 
             # Compare splits for current document
             true_positives, false_negatives, false_positives = \
-                self.compare_splits(true_splits, generated_splits, True)
+                self.compare_splits(true_splits, generated_splits, deep_compare=True)
 
             # Calculate measured scores
             precision, recall, f1_score = self.calculate_measurement_scores(

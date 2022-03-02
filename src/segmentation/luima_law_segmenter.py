@@ -18,7 +18,7 @@ class LuimaLawSegmenter(Segmenter):
         Generates sentences from a document using a law-specific sentence segmenter (Luima)
 
         :param document_id: Document ID
-        :return: Sentences generated from a document using by Luima
+        :return: Sentences generated from a document by Luima
         """
 
         plain_text = self.corpus.annotated_documents_by_id[document_id]["plainText"]
@@ -26,7 +26,7 @@ class LuimaLawSegmenter(Segmenter):
 
         return [
             {
-                "txt": plain_text[start_char:end_char],
+                "text": plain_text[start_char:end_char],
                 "start_char": start_char,
                 "end_char": end_char,
             }
