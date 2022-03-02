@@ -101,7 +101,7 @@ def train(annotations_filepath, unlabeled_data_dir):
     """
 
     corpus = initialize_corpus(annotations_filepath, unlabeled_data_dir)  # Step 1: Dataset Splitting
-    segmenters = initialize_segmenters(corpus)                            # Step 2: Sentence Segmentation
+    segmenters = initialize_segmenters(corpus, debug=False)               # Step 2: Sentence Segmentation
     preprocess_data(segmenter=segmenters["LuimaLawSegmenter"])            # Step 3: Preprocessing (Tokenization)
     train_word_embeddings()                                               # Step 4: Developing Word Embeddings
     train_classifiers()                                                   # Step 5: Training Classifiers
