@@ -4,7 +4,7 @@
 
 # luima_sbd
 [submodule "luima_sbd"]
-	path = lib/luima_sbd
+	path = luima_sbd
 	url = git@github.com:jsavelka/luima_sbd.git
 	ignore = dirty
 
