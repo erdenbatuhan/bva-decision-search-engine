@@ -123,7 +123,7 @@ class UnlabeledTokenizer:
 
     def generate(self):
         """
-        Generates the sentences and tokens
+        Generates the sentences and tokens (Takes a while... Get a coffee or take a nap - a very long one!)
 
         :return: A tuple containing the sentences and tokens generated
         """

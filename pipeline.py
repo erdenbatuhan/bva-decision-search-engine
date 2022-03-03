@@ -70,7 +70,7 @@ def preprocess_data(segmenters, generate_new=False):
 
     # Generate or load sentences and tokens
     if generate_new:
-        return unlabeled_tokenizer.generate()
+        return unlabeled_tokenizer.generate()  # Takes about 4 to 6 hours..
     else:
         return unlabeled_tokenizer.load()
 
