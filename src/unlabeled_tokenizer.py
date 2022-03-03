@@ -46,8 +46,8 @@ class UnlabeledTokenizer:
         """
 
         return sum([
-            sum([len(tokens) for tokens in sentence_tokens])
-            for sentence_tokens in tokens_by_document.values()
+            sum([len(sentence_tokens) for sentence_tokens in sentences_with_tokens])
+            for sentences_with_tokens in tokens_by_document.values()
         ])
 
     def sentence_segment_decisions(self):

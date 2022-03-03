@@ -70,12 +70,12 @@ def preprocess_data(segmenters, generate_new=False):
 
     # Generate or load sentences and tokens
     if generate_new:
-        sentences, tokens = unlabeled_tokenizer.generate()  # Takes about 4 to 6 hours..
+        sentences_by_document, tokens_by_document = unlabeled_tokenizer.generate()  # Takes about 4 to 6 hours..
     else:
-        sentences, tokens = unlabeled_tokenizer.load()
+        sentences_by_document, tokens_by_document = unlabeled_tokenizer.load()
 
     # Write the tokens to a file to be used as an input to embedding computations
-    unlabeled_tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document=sentences, tokens_by_document=tokens)
+    unlabeled_tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document, tokens_by_document)
 
 
 def train_word_embeddings():
