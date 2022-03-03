@@ -3,6 +3,7 @@
  Author: Batuhan Erden
 """
 
+import datetime
 import json
 
 from src.utils.logging_utils import log
@@ -97,6 +98,10 @@ class UnlabeledTokenizer:
         """
 
         spacy_segmenter = self.segmenters["ImprovedSpacySegmenter"]  # Improved Spacy segmenter
+        spacy_segmenter.nlp.disable_pipes("parser")  # For a faster runtime
+
+        # Start the timer
+        start = datetime.datetime.now().replace(microsecond=0)
 
         # Generate tokens
         tokens_by_document = {
@@ -104,11 +109,16 @@ class UnlabeledTokenizer:
             for document_id, sentences in sentences_by_document.items()
         }
 
+        # End the timer and compute duration
+        duration = datetime.datetime.now().replace(microsecond=0) - start
+
         # Write generated tokens to file
         with open(self.GENERATED_TOKENS_FILEPATH, "w") as file:
             json.dump(tokens_by_document, file)
 
-        log("Generated %d tokens from the sentences in the unlabeled corpus!" % self.count_tokens(tokens_by_document))
+        log("Generated %d tokens from the sentences in the unlabeled corpus! (Took %s.)" %
+            (self.count_tokens(tokens_by_document), duration))
+
         return tokens_by_document
 
     def generate(self):
@@ -118,7 +128,8 @@ class UnlabeledTokenizer:
         :return: A tuple containing the sentences and tokens generated
         """
 
-        sentences_by_document = self.sentence_segment_decisions()
+        # sentences_by_document = self.sentence_segment_decisions()
+        sentences_by_document = self.load_sentences()
         tokens_by_document = self.generate_tokens(sentences_by_document)
 
         return sentences_by_document, tokens_by_document
