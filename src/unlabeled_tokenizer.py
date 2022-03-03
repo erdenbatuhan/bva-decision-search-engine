@@ -92,8 +92,16 @@ class UnlabeledTokenizer:
 
             if token.pos_ == "NUM":  # Simplify the number
                 worthy_tokens.append(f"<NUM{len(token)}>")
-            else:  # Lowercase lemma
-                worthy_tokens.append(token.lemma_.lower())
+            else:
+                # Lowercase lemma
+                lemma = token.lemma_.lower()
+
+                # Remove non-alphanumeric characters
+                lemma = ''.join(char for char in lemma if char.isalnum())
+
+                # Add if the resulting lemma is not empty
+                if len(lemma) > 0:
+                    worthy_tokens.append(token.lemma_.lower())
 
         return worthy_tokens
 
