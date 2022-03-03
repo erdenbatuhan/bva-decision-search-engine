@@ -12,6 +12,12 @@ from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
 
 from src.unlabeled_tokenizer import UnlabeledTokenizer
 
+from src.utils.sys_utils import create_dir
+
+# Constants
+OUT_DIR = "./out/"
+GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH = OUT_DIR + "_generated_tokens_for_embeddings.txt"
+
 
 def initialize_corpus(annotations_filepath, unlabeled_data_dir):
     """
@@ -75,7 +81,8 @@ def preprocess_data(segmenters, generate_new=False):
         sentences_by_document, tokens_by_document = unlabeled_tokenizer.load()
 
     # Write the tokens to a file to be used as an input to embedding computations
-    unlabeled_tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document, tokens_by_document)
+    unlabeled_tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document, tokens_by_document,
+                                                            filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
 
 
 def train_word_embeddings():
@@ -123,6 +130,9 @@ if __name__ == "__main__":
                                "the directory containing the unlabeled data => " \
                                "$ python train.py " \
                                "<path to annotations file> <path to directory containing unlabeled data>"
+
+    # Create the out directory
+    create_dir(OUT_DIR)
 
     # Run train
     train(annotations_filepath=sys.argv[1], unlabeled_data_dir=sys.argv[2])
