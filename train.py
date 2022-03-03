@@ -10,7 +10,7 @@ from src.corpus import Corpus
 from src.segmentation.spacy_segmenter import SpacySegmenter
 from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
 
-from src.tokenizer import Tokenizer
+from src.unlabeled_tokenizer import UnlabeledTokenizer
 
 
 def initialize_corpus(annotations_filepath, unlabeled_data_dir):
@@ -57,15 +57,22 @@ def initialize_segmenters(corpus, debug=False):
     return segmenters
 
 
-def preprocess_data(segmenter):
+def preprocess_data(segmenters, generate_new=False):
     """
     Step 3: Preprocessing (Tokenization)
 
-    :param segmenter: Segmenter used
+    :param segmenters: Segmenters initialized
+    :param generate_new: When set to True, sentences and tokens are generated from scratch. Otherwise, they are loaded.
     """
 
-    # Initialize the tokenizer with Luima segmenter
-    tokenizer = Tokenizer(segmenter)
+    # Initialize the unlabeled tokenizer
+    unlabeled_tokenizer = UnlabeledTokenizer(segmenters)
+
+    # Generate or load sentences and tokens
+    if generate_new:
+        return unlabeled_tokenizer.generate()
+    else:
+        return unlabeled_tokenizer.load()
 
 
 def train_word_embeddings():
@@ -100,12 +107,12 @@ def train(annotations_filepath, unlabeled_data_dir):
     :param unlabeled_data_dir: Directory containing the unlabeled data
     """
 
-    corpus = initialize_corpus(annotations_filepath, unlabeled_data_dir)  # Step 1: Dataset Splitting
-    segmenters = initialize_segmenters(corpus, debug=False)               # Step 2: Sentence Segmentation
-    preprocess_data(segmenter=segmenters["LuimaLawSegmenter"])            # Step 3: Preprocessing (Tokenization)
-    train_word_embeddings()                                               # Step 4: Developing Word Embeddings
-    train_classifiers()                                                   # Step 5: Training Classifiers
-    analyze_errors()                                                      # Step 6: Error Analysis
+    corpus = initialize_corpus(annotations_filepath, unlabeled_data_dir)    # Step 1: Dataset Splitting
+    segmenters = initialize_segmenters(corpus, debug=False)                 # Step 2: Sentence Segmentation
+    _, tokens = preprocess_data(segmenters=segmenters, generate_new=False)  # Step 3: Preprocessing (Tokenization)
+    train_word_embeddings()                                                 # Step 4: Developing Word Embeddings
+    train_classifiers()                                                     # Step 5: Training Classifiers
+    analyze_errors()                                                        # Step 6: Error Analysis
 
 
 if __name__ == "__main__":
