@@ -3,16 +3,24 @@
  Author: Batuhan Erden
 """
 
+import random
 import datetime
 import json
+import codecs
 
 from src.utils.logging_utils import log
+from src.utils.sys_utils import create_dir
 
 
 class UnlabeledTokenizer:
 
     SENTENCE_SEGMENTED_DECISIONS_FILEPATH = "./data/unlabeled/_sentence_segmented_decisions.json"
     GENERATED_TOKENS_FILEPATH = "./data/unlabeled/_generated_tokens.json"
+
+    OUT_DIR = "./out/"
+    GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH = OUT_DIR + "_generated_tokens_for_embeddings.txt"
+
+    MIN_NUM_TOKENS_IN_SENTENCE = 5
 
     def __init__(self, segmenters):
         self.segmenters = segmenters
@@ -166,4 +174,38 @@ class UnlabeledTokenizer:
         """
 
         return self.load_sentences(), self.load_tokens()
+
+    def write_tokens_to_file_for_embeddings(self, sentences_by_document, tokens_by_document, randomized=True):
+        """
+        Writes tokens to a file to be used to generate the word embeddings
+
+        Each line of the file should consist of a sentence's tokens, separated by a single whitespace
+
+        :param sentences_by_document: Sentence-segmented decisions
+        :param tokens_by_document: Tokens generated
+        :param randomized: Whether or not the sentences are randomized
+        """
+
+        # Flatten the sentences
+        sentences_with_tokens_flattened = []
+        for sentences_with_tokens in tokens_by_document.values():
+            sentences_with_tokens_flattened += sentences_with_tokens
+
+        if randomized:  # Randomize the sentences
+            random.shuffle(sentences_with_tokens_flattened)
+
+        # Write tokens to a string each line of which consists of a sentence's tokens, separated by a single whitespace
+        tokens_text = ""
+        for tokens in sentences_with_tokens_flattened:
+            if len(tokens) >= self.MIN_NUM_TOKENS_IN_SENTENCE:  # Only take into account the long enough tokens!
+                tokens_text += " ".join(tokens) + "\n"
+
+        # Write the collected string to file
+        create_dir(self.OUT_DIR)
+        with codecs.open(self.GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH, "w", encoding="utf-8") as file:
+            file.write(tokens_text)
+
+        log("Tokens generated from %d of %d sentences successfully written to %s!" %
+            (len(tokens_text.split("\n")), self.count_sentences(sentences_by_document),
+             self.GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH))
 

@@ -8,6 +8,9 @@
 # Data directory
 data/
 
+# Out directory
+out/
+
 # Jupyter-notebooks to ignore
 *_ignore.ipynb
 

@@ -70,9 +70,12 @@ def preprocess_data(segmenters, generate_new=False):
 
     # Generate or load sentences and tokens
     if generate_new:
-        return unlabeled_tokenizer.generate()  # Takes about 4 to 6 hours..
+        sentences, tokens = unlabeled_tokenizer.generate()  # Takes about 4 to 6 hours..
     else:
-        return unlabeled_tokenizer.load()
+        sentences, tokens = unlabeled_tokenizer.load()
+
+    # Write the tokens to a file to be used as an input to embedding computations
+    unlabeled_tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document=sentences, tokens_by_document=tokens)
 
 
 def train_word_embeddings():
@@ -109,7 +112,7 @@ def train(annotations_filepath, unlabeled_data_dir):
 
     corpus = initialize_corpus(annotations_filepath, unlabeled_data_dir)    # Step 1: Dataset Splitting
     segmenters = initialize_segmenters(corpus, debug=False)                 # Step 2: Sentence Segmentation
-    _, tokens = preprocess_data(segmenters=segmenters, generate_new=False)  # Step 3: Preprocessing (Tokenization)
+    preprocess_data(segmenters=segmenters, generate_new=False)              # Step 3: Preprocessing (Tokenization)
     train_word_embeddings()                                                 # Step 4: Developing Word Embeddings
     train_classifiers()                                                     # Step 5: Training Classifiers
     analyze_errors()                                                        # Step 6: Error Analysis
