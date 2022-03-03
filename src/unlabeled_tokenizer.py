@@ -199,7 +199,8 @@ class UnlabeledTokenizer:
         for sentences_with_tokens in tokens_by_document.values():
             sentences_with_tokens_flattened += sentences_with_tokens
 
-        if randomized:  # Randomize the sentences
+        # Randomize the sentences
+        if randomized:
             random.shuffle(sentences_with_tokens_flattened)
 
         # Write tokens to a string each line of which consists of a sentence's tokens, separated by a single whitespace
