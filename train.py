@@ -66,7 +66,7 @@ def preprocess_data(segmenters, generate_new=False):
     """
     Step 3: Preprocessing (Tokenization)
 
-    :param segmenters: Segmenters initialized
+    :param segmenters: Sentence segmenters
     :param generate_new: When set to True, sentences and tokens are generated from scratch. Otherwise, they are loaded.
     """
 
@@ -88,27 +88,45 @@ def train_word_embeddings(train_new=False):
     """
     Step 4: Developing Word Embeddings
 
-    :param train_new: When set to True, a new model is trained. Otherwise, the existing one is loaded.
-    :return The trained/loaded embeddings model
+    :param train_new: When set to True, a new model is trained. Otherwise, the existing one is loaded (default: False)
+    :return The embeddings model trained on the unlabeled corpus
     """
 
-    # Initialize an embeddings model (skipgram)
-    embeddings = Embeddings(model_filepath=EMBEDDINGS_MODEL_FILEPATH,
-                            tokens_filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
+    # Initialize an embeddings model
+    embeddings = Embeddings(model_filepath=EMBEDDINGS_MODEL_FILEPATH)
 
     # Train the model
     if train_new:
-        embeddings.train()
+        embeddings.train(tokens_filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
 
     return embeddings.model
 
 
-def train_classifiers():
+def train_classifiers(corpus, segmenters, embeddings_model):
     """
     Step 5: Training Classifiers
+
+    :param corpus: Corpus
+    :param segmenters: Sentence segmenters
+    :param embeddings_model: The embeddings model trained on the unlabeled corpus
     """
 
-    pass
+    from src.feature_generator import FeatureGenerator
+
+    X = {"NaiveTFIDFFeaturizer": None, "WordEmbeddingFeaturizer": None}
+    y = {"NaiveTFIDFFeaturizer": None, "WordEmbeddingFeaturizer": None}
+
+    # Create the feature generator
+    feature_generator = FeatureGenerator(corpus, tokenization_segmenter=segmenters["ImprovedSpacySegmenter"],
+                                         embeddings_model=embeddings_model)
+    feature_generator.vectorize()
+
+    # Step 5.1: TFIDF Featurization
+    X["NaiveTFIDFFeaturizer"], y["NaiveTFIDFFeaturizer"] = feature_generator.create_inputs_and_labels()
+
+    # Step 5.2: Word Embedding Featurization
+    X["WordEmbeddingFeaturizer"], y["WordEmbeddingFeaturizer"] = feature_generator.create_inputs_and_labels(
+        feature_vector_expanded=True)
 
 
 def analyze_errors():

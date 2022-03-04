@@ -88,7 +88,6 @@ class Corpus:
 
         log("%d documents loaded, %d of which are annotated!" %
             (len(documents_by_id), len(annotated_documents_by_id)))
-
         return annotated_documents_by_id, annotations_by_document, types_by_id
 
     @staticmethod

@@ -66,7 +66,6 @@ class Tokenizer:
 
         log("Sentence-segmented all decisions in the unlabeled corpus (%d sentences) and wrote them to %s!" %
             (self.count_sentences(sentences_by_document), self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH))
-
         return sentences_by_document
 
     @staticmethod
@@ -137,7 +136,6 @@ class Tokenizer:
 
         log("Generated %d tokens from the sentences in the unlabeled corpus and wrote them to %s! (Took %s.)" %
             (self.count_tokens(tokens_by_document), duration, self.GENERATED_TOKENS_FILEPATH))
-
         return tokens_by_document
 
     def generate_unlabeled(self):
