@@ -10,6 +10,8 @@ from src.segmentation.spacy_segmenter import SpacySegmenter
 from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
 from src.tokenizer import Tokenizer
 from src.embeddings import Embeddings
+from src.featurization.tfidf_featurizer import TfidfFeaturizer
+from src.featurization.embeddings_featurizer import EmbeddingsFeaturizer
 from src.utils.sys_utils import create_dir
 
 # Constants
@@ -111,22 +113,20 @@ def train_classifiers(corpus, segmenters, embeddings_model):
     :param embeddings_model: The embeddings model trained on the unlabeled corpus
     """
 
-    from src.feature_generator import FeatureGenerator
+    X = {"TfidfFeaturizer": None, "EmbeddingsFeaturizer": None}
+    y = {"TfidfFeaturizer": None, "EmbeddingsFeaturizer": None}
 
-    X = {"NaiveTFIDFFeaturizer": None, "WordEmbeddingFeaturizer": None}
-    y = {"NaiveTFIDFFeaturizer": None, "WordEmbeddingFeaturizer": None}
-
-    # Create the feature generator
-    feature_generator = FeatureGenerator(corpus, tokenization_segmenter=segmenters["ImprovedSpacySegmenter"],
-                                         embeddings_model=embeddings_model)
-    feature_generator.vectorize()
+    # Initialize the featurizers
+    tfidf_featurizer = TfidfFeaturizer(corpus, tokenization_segmenter=segmenters["ImprovedSpacySegmenter"])
+    embeddings_featurizer = EmbeddingsFeaturizer(corpus, tokenization_segmenter=segmenters["ImprovedSpacySegmenter"],
+                                                 embeddings_model=embeddings_model)
 
     # Step 5.1: TFIDF Featurization
-    X["NaiveTFIDFFeaturizer"], y["NaiveTFIDFFeaturizer"] = feature_generator.create_inputs_and_labels()
+    tfidf_featurizer.vectorize()
+    X["TfidfFeaturizer"], y["TfidfFeaturizer"] = tfidf_featurizer.create_inputs_and_labels()
 
     # Step 5.2: Word Embedding Featurization
-    X["WordEmbeddingFeaturizer"], y["WordEmbeddingFeaturizer"] = feature_generator.create_inputs_and_labels(
-        feature_vector_expanded=True)
+    X["EmbeddingsFeaturizer"], y["EmbeddingsFeaturizer"] = embeddings_featurizer.create_inputs_and_labels()
 
 
 def analyze_errors():

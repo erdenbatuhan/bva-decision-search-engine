@@ -39,15 +39,6 @@ class Segmenter:
 
     @abstractmethod
     def generate_sentences(self, plain_text):
-        """
-        Generates sentences from a plain text
-
-        Must be overridden in the child classes!
-
-        :param plain_text: The plain text
-        :raises: An exception as this is an abstract method that needs to be overridden!
-        """
-
         raise Exception("This is an abstract method that needs to be overridden!")
 
     @staticmethod
