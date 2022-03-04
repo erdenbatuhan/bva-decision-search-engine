@@ -38,15 +38,18 @@ class Embeddings:
         self.model.save_model(self.model_filepath)
         log("The embeddings model is successfully saved!")
 
-    def train(self, tokens_filepath, model_type="skipgram", model_dim=100, model_min_count=20, model_epoch=20):
+    def train(self, tokens_filepath, num_epochs=20):
         """
-        Trains the embeddings model with model arguments
+        Trains the embeddings model and saves it
+
+        :param tokens_filepath: The path to the file containing the tokens
+        :param num_epochs: The number of epochs
         """
 
-        log("Training the embeddings model for %d epochs.." % model_epoch)
-        self.model = fasttext.train_unsupervised(input=tokens_filepath, model=model_type,
-                                                 dim=model_dim, min_count=model_min_count,
-                                                 epoch=model_epoch)
+        log("Training the embeddings model for %d epochs.." % num_epochs)
+        self.model = fasttext.train_unsupervised(input=tokens_filepath, model="skipgram",
+                                                 dim=100, min_count=20,
+                                                 epoch=num_epochs)
         log("The embeddings model is successfully trained!")
 
         self.save_model()
