@@ -94,8 +94,7 @@ def train_word_embeddings(train_new=False):
 
     # Initialize an embeddings model (skipgram)
     embeddings = Embeddings(model_filepath=EMBEDDINGS_MODEL_FILEPATH,
-                            tokens_filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH,
-                            train_new=train_new)
+                            tokens_filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
 
     # Train the model
     if train_new:

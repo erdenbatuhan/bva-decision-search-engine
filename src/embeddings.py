@@ -5,10 +5,10 @@ from src.utils.logging_utils import log
 
 class Embeddings:
 
-    def __init__(self, model_filepath, tokens_filepath, train_new=False,
+    def __init__(self, model_filepath, tokens_filepath,
                  model_type="skipgram", model_dim=100, model_minn=100, model_epoch=50):
         self.model_filepath = model_filepath
-        self.model = self.load_model() if not train_new else None
+        self.model = self.load_model()
         self.model_args = {
             "input": tokens_filepath,
             "model": model_type,
@@ -24,9 +24,14 @@ class Embeddings:
         :return: The existing embeddings model
         """
 
-        log("The embeddings model is being loaded..")
-        model = fasttext.load_model(self.model_filepath)
-        log("The embeddings model is successfully loaded!")
+        model = None
+
+        try:
+            log("The embeddings model is being loaded..")
+            model = fasttext.load_model(self.model_filepath)
+            log("The embeddings model is successfully loaded!")
+        except ValueError:
+            log("No embeddings model found, please train a new one!")
 
         return model
 
@@ -45,11 +50,10 @@ class Embeddings:
         """
 
         log("Training the embeddings model for %d epochs.." % self.model_args["epoch"])
-
         self.model = fasttext.train_unsupervised(input=self.model_args["input"], model=self.model_args["model"],
                                                  dim=self.model_args["dim"], minn=self.model_args["minn"],
                                                  epoch=self.model_args["epoch"])
-        self.save_model()
-
         log("The embeddings model is successfully trained!")
+
+        self.save_model()
 
