@@ -6,17 +6,16 @@
 import sys
 
 from src.corpus import Corpus
-
 from src.segmentation.spacy_segmenter import SpacySegmenter
 from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
-
 from src.unlabeled_tokenizer import UnlabeledTokenizer
-
+from src.embeddings import Embeddings
 from src.utils.sys_utils import create_dir
 
 # Constants
 OUT_DIR = "./out/"
 GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH = OUT_DIR + "_generated_tokens_for_embeddings.txt"
+EMBEDDINGS_MODEL_FILEPATH = OUT_DIR + "_embeddings_model.bin"
 
 
 def initialize_corpus(annotations_filepath, unlabeled_data_dir):
@@ -42,7 +41,7 @@ def initialize_segmenters(corpus, debug=False):
 
     :param corpus: Corpus
     :param debug: Whether or not an error analysis is performed for the segmentations (default: False)
-    :return: segmenters
+    :return: Segmenters
     """
 
     # Initialize the segmenters
@@ -85,12 +84,24 @@ def preprocess_data(segmenters, generate_new=False):
                                                             filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
 
 
-def train_word_embeddings():
+def train_word_embeddings(train_new=False):
     """
     Step 4: Developing Word Embeddings
+
+    :param train_new: When set to True, a new model is trained. Otherwise, the existing one is loaded.
+    :return The trained/loaded embeddings model
     """
 
-    pass
+    # Initialize an embeddings model (skipgram)
+    embeddings = Embeddings(model_filepath=EMBEDDINGS_MODEL_FILEPATH,
+                            tokens_filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH,
+                            train_new=train_new)
+
+    # Train the model
+    if train_new:
+        embeddings.train()
+
+    return embeddings.model
 
 
 def train_classifiers():
@@ -120,7 +131,7 @@ def train(annotations_filepath, unlabeled_data_dir):
     corpus = initialize_corpus(annotations_filepath, unlabeled_data_dir)    # Step 1: Dataset Splitting
     segmenters = initialize_segmenters(corpus, debug=False)                 # Step 2: Sentence Segmentation
     preprocess_data(segmenters=segmenters, generate_new=False)              # Step 3: Preprocessing (Tokenization)
-    train_word_embeddings()                                                 # Step 4: Developing Word Embeddings
+    embeddings_model = train_word_embeddings()                              # Step 4: Developing Word Embeddings
     train_classifiers()                                                     # Step 5: Training Classifiers
     analyze_errors()                                                        # Step 6: Error Analysis
 
