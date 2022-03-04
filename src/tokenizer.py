@@ -65,7 +65,7 @@ class Tokenizer:
             json.dump(sentences_by_document, file)
 
         log("Sentence-segmented all decisions in the unlabeled corpus (%d sentences) and wrote them to %s!" %
-            (self.count_sentences(sentences_by_document), self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH))
+            (Tokenizer.count_sentences(sentences_by_document), self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH))
         return sentences_by_document
 
     @staticmethod
@@ -113,7 +113,7 @@ class Tokenizer:
         """
 
         log("Generating tokens from %d sentences in the unlabeled corpus!" %
-            self.count_sentences(sentences_by_document))
+            Tokenizer.count_sentences(sentences_by_document))
 
         spacy_segmenter = self.segmenters["ImprovedSpacySegmenter"]  # Improved Spacy segmenter
         spacy_segmenter.nlp.disable_pipes("parser")  # For a faster runtime
@@ -123,7 +123,7 @@ class Tokenizer:
 
         # Generate tokens
         tokens_by_document = {
-            document_id: [self.tokenize(spacy_segmenter, sentence["text"]) for sentence in sentences]
+            document_id: [Tokenizer.tokenize(spacy_segmenter, sentence["text"]) for sentence in sentences]
             for document_id, sentences in tqdm(sentences_by_document.items())
         }
 
@@ -135,7 +135,7 @@ class Tokenizer:
             json.dump(tokens_by_document, file)
 
         log("Generated %d tokens from the sentences in the unlabeled corpus and wrote them to %s! (Took %s.)" %
-            (self.count_tokens(tokens_by_document), duration, self.GENERATED_TOKENS_FILEPATH))
+            (Tokenizer.count_tokens(tokens_by_document), duration, self.GENERATED_TOKENS_FILEPATH))
         return tokens_by_document
 
     def generate_unlabeled(self):
@@ -162,7 +162,7 @@ class Tokenizer:
         log("Loading the existing sentences generated from the unlabeled corpus..")
         sentences_by_document = json.load(open(self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH))
         log("Loaded %d sentences generated from the unlabeled corpus!" %
-            self.count_sentences(sentences_by_document))
+            Tokenizer.count_sentences(sentences_by_document))
 
         return sentences_by_document
 
@@ -176,7 +176,7 @@ class Tokenizer:
         log("Loading the existing tokens generated from the sentence-segmented decisions in the unlabeled corpus..")
         tokens_by_document = json.load(open(self.GENERATED_TOKENS_FILEPATH))
         log("Loaded %d tokens generated from the sentence-segmented decisions in the unlabeled corpus!" %
-            self.count_tokens(tokens_by_document))
+            Tokenizer.count_tokens(tokens_by_document))
 
         return tokens_by_document
 
@@ -228,5 +228,5 @@ class Tokenizer:
             file.write(tokens_text)
 
         log("Tokens generated from %d of %d sentences successfully written to %s!" %
-            (len(tokens_text.split("\n")), self.count_sentences(sentences_by_document), filepath))
+            (len(tokens_text.split("\n")), Tokenizer.count_sentences(sentences_by_document), filepath))
 

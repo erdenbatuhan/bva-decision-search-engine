@@ -18,10 +18,10 @@ class Corpus:
     def __init__(self, annotations_filepath, unlabeled_data_dir):
         # Load labeled data
         self.annotated_documents_by_id, self.annotations_by_document, self.types_by_id = \
-            self.load_labeled_data(annotations_filepath)
+            Corpus.load_labeled_data(annotations_filepath)
 
         # Read unlabeled data
-        self.unlabeled_data = self.load_unlabeled_data(unlabeled_data_dir)
+        self.unlabeled_data = Corpus.load_unlabeled_data(unlabeled_data_dir)
 
         # Create balanced split spans
         self.train_spans, self.val_spans, self.test_spans = self.create_balanced_span_splits()
@@ -65,7 +65,8 @@ class Corpus:
 
         return annotations_by_document
 
-    def load_labeled_data(self, annotations_filepath):
+    @staticmethod
+    def load_labeled_data(annotations_filepath):
         """
         Loads the labeled data with annotations
 
@@ -83,8 +84,8 @@ class Corpus:
         types_by_id = {t["_id"]: t for t in data["types"]}
 
         # Only work with annotated documents
-        annotated_documents_by_id = self.create_annotated_documents_by_id(documents_by_id, data["annotations"])
-        annotations_by_document = self.create_annotations_by_document(data["annotations"])
+        annotated_documents_by_id = Corpus.create_annotated_documents_by_id(documents_by_id, data["annotations"])
+        annotations_by_document = Corpus.create_annotations_by_document(data["annotations"])
 
         log("%d documents loaded, %d of which are annotated!" %
             (len(documents_by_id), len(annotated_documents_by_id)))
@@ -188,7 +189,7 @@ class Corpus:
 
         return {
             document_id: self.annotated_documents_by_id[document_id]["plainText"]
-            for document_id in self.get_documents_split(spans)
+            for document_id in Corpus.get_documents_split(spans)
         }
 
     def get_distinct_headers(self, spans):

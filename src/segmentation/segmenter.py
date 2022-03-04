@@ -136,7 +136,7 @@ class Segmenter:
         scores_by_document = {}
 
         # Get the true splits (starts and ends) from corpus
-        true_splits_by_document = self.get_true_splits_by_document(self.corpus.train_spans)
+        true_splits_by_document = Segmenter.get_true_splits_by_document(self.corpus.train_spans)
 
         # Iterate over documents
         for document_id, true_splits in tqdm(true_splits_by_document.items()):
@@ -150,7 +150,7 @@ class Segmenter:
             true_positives, false_negatives, false_positives = self.compare_splits(true_splits, generated_splits)
 
             # Calculate measured scores
-            precision, recall, f1_score = self.calculate_measurement_scores(
+            precision, recall, f1_score = Segmenter.calculate_measurement_scores(
                 true_positives, false_negatives, false_positives)
 
             # Add scores to the dictionary
@@ -202,11 +202,11 @@ class Segmenter:
         total_false_positives = sum([score["false_positives"] for score in split_scores_by_document.values()])
 
         # Calculate total measured score
-        precision, recall, f1_score = self.calculate_measurement_scores(
+        precision, recall, f1_score = Segmenter.calculate_measurement_scores(
             total_true_positives, total_false_negatives, total_false_positives)
 
         # Identify the document(s) with the worst performance in terms of score
-        worst_scores = self.get_worst_scores(split_scores_by_document)
+        worst_scores = Segmenter.get_worst_scores(split_scores_by_document)
 
         print("===========================================================================\n" +
               ("Segmentation Error Analysis for %s:\n" % self.name) +
@@ -235,7 +235,7 @@ class Segmenter:
 
         # Generate Spacy sentences
         generated_sentences_by_document = {
-            document_id: self.generate_sentences(plain_text)
+            document_id: Segmenter.generate_sentences(plain_text)
             for document_id, plain_text in tqdm(self.get_plain_texts_by_document(annotated).items())
         }
 
