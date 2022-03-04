@@ -81,7 +81,7 @@ def preprocess_data(segmenters, generate_new=False):
 
     # Write the tokens to a file to be used as an input to embedding computations
     tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document, tokens_by_document,
-                                                            filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
+                                                  filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
 
 
 def train_word_embeddings(train_new=False):
