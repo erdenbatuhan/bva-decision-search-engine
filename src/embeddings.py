@@ -25,7 +25,7 @@ class Embeddings:
             model = fasttext.load_model(self.model_filepath)
             log("The embeddings model is successfully loaded!")
         except ValueError:
-            log("No embeddings model found, please train a new one!")
+            log("No embeddings model found!")
 
         return model
 
