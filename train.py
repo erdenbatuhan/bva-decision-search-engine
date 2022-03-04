@@ -8,7 +8,7 @@ import sys
 from src.corpus import Corpus
 from src.segmentation.spacy_segmenter import SpacySegmenter
 from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
-from src.unlabeled_tokenizer import UnlabeledTokenizer
+from src.tokenizer import Tokenizer
 from src.embeddings import Embeddings
 from src.utils.sys_utils import create_dir
 
@@ -70,17 +70,17 @@ def preprocess_data(segmenters, generate_new=False):
     :param generate_new: When set to True, sentences and tokens are generated from scratch. Otherwise, they are loaded.
     """
 
-    # Initialize the unlabeled tokenizer
-    unlabeled_tokenizer = UnlabeledTokenizer(segmenters)
+    # Initialize the tokenizer
+    tokenizer = Tokenizer(segmenters)
 
     # Generate or load sentences and tokens
     if generate_new:
-        sentences_by_document, tokens_by_document = unlabeled_tokenizer.generate()  # Takes about 4 to 6 hours..
+        sentences_by_document, tokens_by_document = tokenizer.generate_unlabeled()  # Takes about 4 to 6 hours..
     else:
-        sentences_by_document, tokens_by_document = unlabeled_tokenizer.load()
+        sentences_by_document, tokens_by_document = tokenizer.load_unlabeled()
 
     # Write the tokens to a file to be used as an input to embedding computations
-    unlabeled_tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document, tokens_by_document,
+    tokenizer.write_tokens_to_file_for_embeddings(sentences_by_document, tokens_by_document,
                                                             filepath=GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH)
 
 

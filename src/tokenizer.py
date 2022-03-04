@@ -1,5 +1,5 @@
 """
- File:   unlabeled_tokenizer.py
+ File:   tokenizer.py
  Author: Batuhan Erden
 """
 
@@ -12,7 +12,7 @@ from tqdm import tqdm
 from src.utils.logging_utils import log
 
 
-class UnlabeledTokenizer:
+class Tokenizer:
 
     SENTENCE_SEGMENTED_DECISIONS_FILEPATH = "./data/unlabeled/_sentence_segmented_decisions.json"
     GENERATED_TOKENS_FILEPATH = "./data/unlabeled/_generated_tokens.json"
@@ -47,7 +47,7 @@ class UnlabeledTokenizer:
             for sentences_with_tokens in tokens_by_document.values()
         ])
 
-    def sentence_segment_decisions(self):
+    def sentence_segment_decisions_unlabeled(self):
         """
         Sentence-segments all decisions in the unlabeled corpus using a law-specific segmenter (Luima)
 
@@ -87,10 +87,6 @@ class UnlabeledTokenizer:
             if token.pos_ in ["PUNCT", "SPACE", "PART"]:
                 continue
 
-            # Remove the special characters: "�" and "§"
-            if token.lemma_ in ["�", "§"]:
-                continue
-
             if token.pos_ == "NUM":  # Simplify the number
                 worthy_tokens.append(f"<NUM{len(token)}>")
             else:
@@ -106,7 +102,7 @@ class UnlabeledTokenizer:
 
         return worthy_tokens
 
-    def generate_tokens(self, sentences_by_document):
+    def generate_tokens_unlabeled(self, sentences_by_document):
         """
         Generates tokens from the sentence-segmented decisions in the unlabeled corpus using Spacy
 
@@ -141,19 +137,21 @@ class UnlabeledTokenizer:
 
         return tokens_by_document
 
-    def generate(self):
+    def generate_unlabeled(self):
         """
-        Generates the sentences and tokens (Takes a while... Get a coffee or take a nap - a very long one!)
+        Generates the sentences and tokens in the unlabeled corpus
+
+        Note: Takes a while... Get a coffee or take a nap - a very long one!
 
         :return: A tuple containing the sentences and tokens generated
         """
 
-        sentences_by_document = self.sentence_segment_decisions()
-        tokens_by_document = self.generate_tokens(sentences_by_document)
+        sentences_by_document = self.sentence_segment_decisions_unlabeled()
+        tokens_by_document = self.generate_tokens_unlabeled(sentences_by_document)
 
         return sentences_by_document, tokens_by_document
 
-    def load_sentences(self):
+    def load_sentences_unlabeled(self):
         """
         Loads the existing sentences generated from the unlabeled corpus
 
@@ -167,9 +165,9 @@ class UnlabeledTokenizer:
 
         return sentences_by_document
 
-    def load_tokens(self):
+    def load_tokens_unlabeled(self):
         """
-        Loads the existing tokens generated sentence-segmented decisions in the unlabeled corpu
+        Loads the existing tokens generated sentence-segmented decisions in the unlabeled corpus
 
         :return: The existing tokens
         """
@@ -181,14 +179,14 @@ class UnlabeledTokenizer:
 
         return tokens_by_document
 
-    def load(self):
+    def load_unlabeled(self):
         """
-        Loads the existing sentences and tokens
+        Loads the existing sentences and tokens in the unlabeled corpus
 
         :return: A tuple containing the existing sentences and tokens loaded
         """
 
-        return self.load_sentences(), self.load_tokens()
+        return self.load_sentences_unlabeled(), self.load_tokens_unlabeled()
 
     def write_tokens_to_file_for_embeddings(self, sentences_by_document, tokens_by_document, filepath, randomized=True):
         """
