@@ -9,6 +9,7 @@ import json
 import codecs
 from tqdm import tqdm
 
+from src.utils.type_utils import is_number, is_date
 from src.utils.logging_utils import log
 
 
@@ -87,9 +88,11 @@ class Tokenizer:
             if token.pos_ in ["PUNCT", "SPACE", "PART"]:
                 continue
 
-            if token.pos_ == "NUM":  # Simplify the number
+            if is_date(str(token)):  # Simplify the date
+                worthy_tokens.append(f"<DATE{len(token)}>")
+            elif token.pos_ == "NUM" or is_number(str(token)):  # Simplify the number
                 worthy_tokens.append(f"<NUM{len(token)}>")
-            else:
+            else:  # Otherwise, process the lemma
                 # Lowercase lemma
                 lemma = token.lemma_.lower()
 
@@ -98,7 +101,7 @@ class Tokenizer:
 
                 # Add if the resulting lemma is not empty
                 if len(lemma) > 0:
-                    worthy_tokens.append(token.lemma_.lower())
+                    worthy_tokens.append(lemma.lower())
 
         return worthy_tokens
 
