@@ -5,6 +5,8 @@ from src.utils.logging_utils import log
 
 class Embeddings:
 
+    NUM_NEIGHBORS_CONSIDERED_CLOSE = 10
+
     def __init__(self, model_filepath, tokens_filepath,
                  model_type="skipgram", model_dim=100, model_minn=100, model_epoch=50):
         self.model_filepath = model_filepath
@@ -56,4 +58,14 @@ class Embeddings:
         log("The embeddings model is successfully trained!")
 
         self.save_model()
+
+    def get_nearest_neighbors(self, words):
+        """
+        Gets NUM_NEIGHBORS_CONSIDERED_CLOSE nearest neighbors of words given
+
+        :param words: Words to get the nearest neighbor information for
+        :return: nearest neighbors of each word given
+        """
+
+        return {word: self.model.get_nearest_neighbors(word, k=self.NUM_NEIGHBORS_CONSIDERED_CLOSE) for word in words}
 
