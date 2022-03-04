@@ -47,7 +47,7 @@ class Embeddings:
         """
 
         log("Training the embeddings model for %d epochs.." % num_epochs)
-        self.model = fasttext.train_unsupervised(input=tokens_filepath, model="skipgram", dim=100, min_count=3,
+        self.model = fasttext.train_unsupervised(input=tokens_filepath, model="skipgram", dim=100, min_count=20,
                                                  epoch=num_epochs)
         log("The embeddings model is successfully trained!")
 
