@@ -131,7 +131,7 @@ def train(annotations_filepath, unlabeled_data_dir):
     corpus = initialize_corpus(annotations_filepath, unlabeled_data_dir)    # Step 1: Dataset Splitting
     segmenters = initialize_segmenters(corpus, debug=False)                 # Step 2: Sentence Segmentation
     preprocess_data(segmenters=segmenters, generate_new=False)              # Step 3: Preprocessing (Tokenization)
-    embeddings_model = train_word_embeddings()                              # Step 4: Developing Word Embeddings
+    embeddings_model = train_word_embeddings(train_new=False)               # Step 4: Developing Word Embeddings
     train_classifiers()                                                     # Step 5: Training Classifiers
     analyze_errors()                                                        # Step 6: Error Analysis
 
