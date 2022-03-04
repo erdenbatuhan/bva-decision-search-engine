@@ -114,7 +114,8 @@ class UnlabeledTokenizer:
         :return: Tokens generated from the sentence-segmented decisions
         """
 
-        log("Generating tokens from %d sentences in the unlabeled corpus!" % sentences_by_document)
+        log("Generating tokens from %d sentences in the unlabeled corpus!" %
+            self.count_sentences(sentences_by_document))
 
         spacy_segmenter = self.segmenters["ImprovedSpacySegmenter"]  # Improved Spacy segmenter
         spacy_segmenter.nlp.disable_pipes("parser")  # For a faster runtime
@@ -147,8 +148,7 @@ class UnlabeledTokenizer:
         :return: A tuple containing the sentences and tokens generated
         """
 
-        # sentences_by_document = self.sentence_segment_decisions()
-        sentences_by_document = self.load_sentences()
+        sentences_by_document = self.sentence_segment_decisions()
         tokens_by_document = self.generate_tokens(sentences_by_document)
 
         return sentences_by_document, tokens_by_document
