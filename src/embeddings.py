@@ -48,7 +48,7 @@ class Embeddings:
 
         self.model = fasttext.train_unsupervised(input=self.model_args["input"], model=self.model_args["model"],
                                                  dim=self.model_args["dim"], minn=self.model_args["minn"],
-                                                 epoch=self.model_args["minn"])
+                                                 epoch=self.model_args["epoch"])
         self.save_model()
 
         log("The embeddings model is successfully trained!")
