@@ -5,8 +5,10 @@
 
 import json
 import glob
+from tqdm import tqdm
 
 from src.utils import data_utils
+from src.utils.sys_utils import log
 
 
 class Corpus:
@@ -71,7 +73,9 @@ class Corpus:
         :return: A tuple containing the data (annotated_documents_by_id, annotations_by_document, types_by_id)
         """
 
-        # Load data
+        log("Loading the labeled data..")
+
+        # Load the labeled data
         data = json.load(open(annotations_filepath))
 
         # Distribute the data into dictionaries
@@ -81,6 +85,9 @@ class Corpus:
         # Only work with annotated documents
         annotated_documents_by_id = self.create_annotated_documents_by_id(documents_by_id, data["annotations"])
         annotations_by_document = self.create_annotations_by_document(data["annotations"])
+
+        log("%d documents loaded, %d of which are annotated!" %
+            (len(documents_by_id), len(annotated_documents_by_id)))
 
         return annotated_documents_by_id, annotations_by_document, types_by_id
 
@@ -92,13 +99,16 @@ class Corpus:
         :param unlabeled_data_dir: Directory containing the unlabeled data
         :return: Unlabeled data
         """
+
+        log("Loading the unlabeled data..")
         unlabeled = {}
 
-        # Read the unlabeled data
-        for file in glob.glob(unlabeled_data_dir + "*.txt"):
+        # Load the unlabeled data
+        for file in tqdm(glob.glob(unlabeled_data_dir + "*.txt")):
             with open(file, encoding="latin-1") as data:
                 unlabeled[file] = data.read()
 
+        log("%d unlabeled documents loaded!" % len(unlabeled))
         return unlabeled
 
     def create_span_data(self, annotated_document_ids):

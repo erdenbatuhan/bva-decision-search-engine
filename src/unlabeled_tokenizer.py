@@ -7,6 +7,7 @@ import random
 import datetime
 import json
 import codecs
+from tqdm import tqdm
 
 from src.utils.logging_utils import log
 
@@ -53,6 +54,8 @@ class UnlabeledTokenizer:
         :return: Sentence-segmented decisions
         """
 
+        log("Sentence-segmenting all decisions in the unlabeled corpus using a law-specific segmenter (Luima)..")
+
         # Sentence-segment all decisions in the unlabeled corpus using a law-specific segmenter (Luima)
         sentences_by_document = self.segmenters["LuimaLawSegmenter"].apply_segmentation(annotated=False, debug=False)
 
@@ -60,7 +63,9 @@ class UnlabeledTokenizer:
         with open(self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH, "w") as file:
             json.dump(sentences_by_document, file)
 
-        log("Generated %d sentences from the unlabeled corpus!" % self.count_sentences(sentences_by_document))
+        log("Sentence-segmented all decisions in the unlabeled corpus (%d sentences) and wrote them to %s!" %
+            (self.count_sentences(sentences_by_document), self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH))
+
         return sentences_by_document
 
     @staticmethod
@@ -109,6 +114,8 @@ class UnlabeledTokenizer:
         :return: Tokens generated from the sentence-segmented decisions
         """
 
+        log("Generating tokens from %d sentences in the unlabeled corpus!" % sentences_by_document)
+
         spacy_segmenter = self.segmenters["ImprovedSpacySegmenter"]  # Improved Spacy segmenter
         spacy_segmenter.nlp.disable_pipes("parser")  # For a faster runtime
 
@@ -118,7 +125,7 @@ class UnlabeledTokenizer:
         # Generate tokens
         tokens_by_document = {
             document_id: [self.tokenize(spacy_segmenter, sentence["text"]) for sentence in sentences]
-            for document_id, sentences in sentences_by_document.items()
+            for document_id, sentences in tqdm(sentences_by_document.items())
         }
 
         # End the timer and compute duration
@@ -128,8 +135,8 @@ class UnlabeledTokenizer:
         with open(self.GENERATED_TOKENS_FILEPATH, "w") as file:
             json.dump(tokens_by_document, file)
 
-        log("Generated %d tokens from the sentences in the unlabeled corpus! (Took %s.)" %
-            (self.count_tokens(tokens_by_document), duration))
+        log("Generated %d tokens from the sentences in the unlabeled corpus and wrote them to %s! (Took %s.)" %
+            (self.count_tokens(tokens_by_document), duration, self.GENERATED_TOKENS_FILEPATH))
 
         return tokens_by_document
 
@@ -148,26 +155,30 @@ class UnlabeledTokenizer:
 
     def load_sentences(self):
         """
-        Loads the existing sentences
+        Loads the existing sentences generated from the unlabeled corpus
 
         :return: The existing sentences
         """
 
+        log("Loading the existing sentences generated from the unlabeled corpus..")
         sentences_by_document = json.load(open(self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH))
+        log("Loaded %d sentences generated from the unlabeled corpus!" %
+            self.count_sentences(sentences_by_document))
 
-        log("Loaded %d sentences generated from the unlabeled corpus!" % self.count_sentences(sentences_by_document))
         return sentences_by_document
 
     def load_tokens(self):
         """
-        Loads the existing tokens
+        Loads the existing tokens generated sentence-segmented decisions in the unlabeled corpu
 
         :return: The existing tokens
         """
 
+        log("Loading the existing tokens generated from the sentence-segmented decisions in the unlabeled corpus..")
         tokens_by_document = json.load(open(self.GENERATED_TOKENS_FILEPATH))
+        log("Loaded %d tokens generated from the sentence-segmented decisions in the unlabeled corpus!" %
+            self.count_tokens(tokens_by_document))
 
-        log("Loaded %d tokens generated from the unlabeled corpus!" % self.count_tokens(tokens_by_document))
         return tokens_by_document
 
     def load(self):
@@ -192,17 +203,24 @@ class UnlabeledTokenizer:
         """
 
         # Flatten the sentences
+        log("Flattening the sentences..")
+
         sentences_with_tokens_flattened = []
         for sentences_with_tokens in tokens_by_document.values():
             sentences_with_tokens_flattened += sentences_with_tokens
 
         # Randomize the sentences
+        log("Randomizing the sentences..")
+
         if randomized:
             random.shuffle(sentences_with_tokens_flattened)
 
         # Write tokens to a string each line of which consists of a sentence's tokens, separated by a single whitespace
+        log("Writing tokens to a file each line of which consists of a sentence's tokens, "
+            "separated by a single whitespace..")
+
         tokens_text = ""
-        for tokens in sentences_with_tokens_flattened:
+        for tokens in tqdm(sentences_with_tokens_flattened):
             if len(tokens) >= self.MIN_NUM_TOKENS_IN_SENTENCE:  # Only take into account the long enough tokens!
                 tokens_text += " ".join(tokens) + "\n"
 

@@ -1,3 +1,8 @@
+"""
+ File:   sys_utils.py
+ Author: Batuhan Erden
+"""
+
 import os
 
 from src.utils.logging_utils import log
@@ -11,6 +16,6 @@ def create_dir(dir_name):
     """
 
     if not os.path.exists(dir_name):
-        log("Creating a directory named %s" % dir_name)
+        log("Creating a directory named %s.." % dir_name)
         os.mkdir(dir_name)
 
