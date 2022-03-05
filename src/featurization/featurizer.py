@@ -46,8 +46,7 @@ class Featurizer:
     def create_feature_vector(self, spans):
         raise Exception("This is an abstract method that needs to be overridden!")
 
-    @staticmethod
-    def create_feature_vector_expansions(spans):
+    def create_feature_vector_expansions(self, spans):
         """
         Creates the additional features to be used in expanding the feature vector
 
@@ -61,19 +60,20 @@ class Featurizer:
         :return: The feature vector expansions
         """
 
-        # Number of tokens across all sentences
+        # Number of tokens across all sentences for given spans and train spans
         num_tokens = np.array([len(span["tokens"]) for span in spans])
+        num_tokens_train = np.array([len(span["tokens"]) for span in self.corpus.train_spans]) \
+            if self.corpus is not None else num_tokens
 
         # Create the expansions
         return [
             # Expansion 1: Normalized positions
             np.expand_dims(np.array([span["start_normalized"] for span in spans]), axis=1),
             # Expansion 2: Number of tokens normalized
-            np.expand_dims((num_tokens - np.mean(num_tokens)) / np.std(num_tokens), axis=1)
+            np.expand_dims((num_tokens - np.mean(num_tokens_train)) / np.std(num_tokens_train), axis=1)
         ]
 
-    @staticmethod
-    def expand_feature_vector(dataset_name, spans, feature_vector):
+    def expand_feature_vector(self, dataset_name, spans, feature_vector):
         """
         Expands the feature vector with additional features (@see create_feature_vector_expansions)
 
@@ -86,7 +86,7 @@ class Featurizer:
         log("Expanding the feature vector (%s).." % dataset_name)
 
         shape_before_expansion = np.array(feature_vector.shape)
-        expansions = Featurizer.create_feature_vector_expansions(spans)
+        expansions = self.create_feature_vector_expansions(spans)
 
         # Expand the feature vector
         for expansion in expansions:
@@ -123,7 +123,7 @@ class Featurizer:
         feature_vector = self.create_feature_vector(spans)
 
         # Expand the feature vector
-        feature_vector = Featurizer.expand_feature_vector(dataset_name, spans, feature_vector)
+        feature_vector = self.expand_feature_vector(dataset_name, spans, feature_vector)
 
         # Create X=inputs and y=labels
         return feature_vector, np.array([span["type"] for span in spans])
