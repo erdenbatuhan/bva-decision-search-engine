@@ -7,10 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.svm import LinearSVC
-from sklearn.ensemble import RandomForestClassifier
-
-from src.utils.logging_utils import log
 
 
 def plot_confusion_matrix(true_labels, predicted_labels, classes, title=None, cmap=plt.cm.Blues):
@@ -67,7 +63,7 @@ def test_classifier(classifier, X, y, use_test_set=False):
 
     # Train classifiers on train set and validate on val set
     for featurizer_name in X:
-        # Train on test set
+        # Train on train set
         classifier_trained = classifier.fit(X[featurizer_name]["train"], y[featurizer_name]["train"])
 
         # Validate on both test and val sets
@@ -84,46 +80,4 @@ def test_classifier(classifier, X, y, use_test_set=False):
             plt.show()
 
         print("-" * 100)  # Just a line separator
-
-
-def train_using_featurizers(featurizers, debug=False):
-    """
-    Trains classifiers using the featurizers given
-
-    :param featurizers: {name: featurizer} - The featurizers used (e.g. TfidfFeaturizer, EmbeddingsFeaturizer, etc.)
-    :param debug: Whether or not the classifiers are tested (default: False)
-    :return Linear and non-linear classifiers
-    """
-
-    # Create the inputs and labels
-    log("Creating the inputs and labels..")
-
-    X, y = {}, {}
-    for name, featurizer in featurizers.items():
-        X[name], y[name] = featurizer.create_inputs_and_labels()
-        print(featurizer.analyze_shapes(X[name], y[name]))
-
-    log("The inputs and labels are successfully created!")
-
-    # Step 5.3.1: Linear Model - Linear Support Vector Machine Classifier
-    log("Initializing the linear classifier..")
-    classifier_linear_svm = LinearSVC()
-    log("The linear classifier successfully initialized!")
-
-    if debug:
-        log("Testing the linear classifier..")
-        test_classifier(classifier_linear_svm, X, y, use_test_set=True)
-        log("The linear classifier successfully tested!")
-
-    # Step 5.3.2: Non-linear Model
-    log("Initializing the non-linear classifier..")
-    classifier_random_forests = RandomForestClassifier(n_estimators=150, max_depth=15, bootstrap=True)
-    log("The non-linear classifier successfully initialized!")
-
-    if debug:
-        log("Testing the non-linear classifier..")
-        test_classifier(classifier_random_forests, X, y, use_test_set=True)
-        log("The non-linear classifier successfully tested!")
-
-    return classifier_linear_svm, classifier_random_forests
 
