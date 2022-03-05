@@ -139,3 +139,20 @@ class Featurizer:
         log("The inputs and labels successfully created for train, val and test sets!")
         return X, y
 
+    def analyze_shapes(self, X, y):
+        """
+        Analyzes the shapes of the inputs and labels
+
+        :param X: Inputs
+        :param y: Labels
+        """
+
+        print(f"{type(self).__name__}:")
+
+        for dataset_type in X:
+            print(f"- The shapes of X_{dataset_type} and y_{dataset_type} are " +
+                  f"{X[dataset_type].shape} and " +
+                  f"{y[dataset_type].shape} respectively.")
+
+        print()
+

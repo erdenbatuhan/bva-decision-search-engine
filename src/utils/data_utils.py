@@ -6,13 +6,14 @@
 import random
 
 
-def split_data_balanced(inputs, type_key, val_test_size=.1):
+def split_data_balanced(inputs, type_key, val_test_size=.1, random_seed=42):
     """
     Splits the data in a balanced way
 
     :param inputs: Inputs as a dictionary where IDs and items are keys and values respectively
     :param type_key: Key of the type attribute that the data will be balanced around (e.g. outcome)
-    :param val_test_size: Percentage of the validation and test data size
+    :param val_test_size: Percentage of both the validation and test data size (default: .1)
+    :param random_seed: Random seed used to randomize the inputs (default: 42)
     :return: Tuple containing the training, validation and test data
     """
 
@@ -25,7 +26,7 @@ def split_data_balanced(inputs, type_key, val_test_size=.1):
 
     # Shuffle inputs for each type
     for _, item in inputs_by_type.items():
-        random.shuffle(item)
+        random.Random(random_seed).shuffle(item)
 
     train, val, test = [], [], []
     size_per_type = int(len(inputs) / len(distinct_types))

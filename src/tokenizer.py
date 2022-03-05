@@ -189,7 +189,8 @@ class Tokenizer:
 
         return self.load_sentences_unlabeled(), self.load_tokens_unlabeled()
 
-    def write_tokens_to_file_for_embeddings(self, sentences_by_document, tokens_by_document, filepath, randomized=True):
+    def write_tokens_to_file_for_embeddings(self, sentences_by_document, tokens_by_document, filepath,
+                                            randomized=True, random_seed=42):
         """
         Writes tokens to a file to be used to generate the word embeddings
 
@@ -198,7 +199,8 @@ class Tokenizer:
         :param sentences_by_document: Sentence-segmented decisions
         :param tokens_by_document: Tokens generated
         :param filepath: The path of the file to which the tokens are written
-        :param randomized: Whether or not the sentences are randomized
+        :param randomized: Whether or not the sentences are randomized (default: True)
+        :param random_seed: Random seed used to randomize the inputs (default: 42)
         """
 
         # Flatten the sentences
@@ -212,7 +214,7 @@ class Tokenizer:
         log("Randomizing the sentences..")
 
         if randomized:
-            random.shuffle(sentences_with_tokens_flattened)
+            random.Random(random_seed).shuffle(sentences_with_tokens_flattened)
 
         # Write tokens to a string each line of which consists of a sentence's tokens, separated by a single whitespace
         log("Writing tokens to a file each line of which consists of a sentence's tokens, "
