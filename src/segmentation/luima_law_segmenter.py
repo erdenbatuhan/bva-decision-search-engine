@@ -27,7 +27,7 @@ class LuimaLawSegmenter(Segmenter):
 
         return [
             {
-                "text": plain_text[start_char:end_char],
+                "txt": plain_text[start_char:end_char],
                 "start_char": start_char,
                 "end_char": end_char,
             }

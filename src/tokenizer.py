@@ -123,7 +123,7 @@ class Tokenizer:
 
         # Generate tokens
         tokens_by_document = {
-            document_id: [Tokenizer.tokenize(spacy_segmenter, sentence["text"]) for sentence in sentences]
+            document_id: [Tokenizer.tokenize(spacy_segmenter, sentence["txt"]) for sentence in sentences]
             for document_id, sentences in tqdm(sentences_by_document.items())
         }
 

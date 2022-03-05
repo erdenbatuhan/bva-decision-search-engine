@@ -27,20 +27,20 @@ class Featurizer:
 
         return Tokenizer.tokenize(self.tokenization_segmenter, plain_text)
 
-    def tokenize_spans(self, spans_by_dataset):
+    def tokenize_spans(self, dataset_name, spans):
         """
-        Tokenizes spans and store the tokens in each span for further use during featurization
+        Tokenizes spans and stores the tokens in each span for further use during featurization
 
-        :param spans_by_dataset: Spans by each dataset (train, val and test)
+        :param dataset_name: The name describing if it is the train, val or test data
+        :param spans: Spans used to create the additional features
         """
 
-        for dataset_type, spans in spans_by_dataset.items():
-            log("Adding tokens to the %s spans.." % dataset_type)
+        log("Adding tokens to the %s spans.." % dataset_name)
 
-            for span in tqdm(spans):
-                span["tokens"] = self.tokenize(span["txt"])
+        for span in tqdm(spans):
+            span["tokens"] = self.tokenize(span["txt"])
 
-            log("Tokens successfully added to the %s spans!" % dataset_type)
+        log("Tokens successfully added to the %s spans!" % dataset_name)
 
     @abstractmethod
     def create_feature_vector(self, spans):
@@ -104,6 +104,30 @@ class Featurizer:
 
         return feature_vector
 
+    def create_inputs_and_labels_for_spans(self, dataset_name, spans, tokenize=False):
+        """
+        Creates X=inputs and y=labels for given spans
+
+        :param dataset_name: The name describing if it is the train, val or test data
+        :param spans: Spans used to create the additional features
+        :param tokenize: When set to True, the spans will be tokenized - used during testing,
+                         see "analyze.py" (default: False)
+        :return: X and y for given spans
+        """
+
+        # Tokenize spans (Only used during testing, see "analyze.py")
+        if tokenize:
+            self.tokenize_spans(dataset_name, spans)
+
+        # Create the feature vector
+        feature_vector = self.create_feature_vector(spans)
+
+        # Expand the feature vector
+        feature_vector = self.expand_feature_vector(dataset_name, spans, feature_vector)
+
+        # Create X=inputs and y=labels
+        return feature_vector, np.array([span["type"] for span in spans])
+
     def create_inputs_and_labels(self):
         """
         Creates X=inputs and y=labels for train, val and test sets
@@ -122,19 +146,12 @@ class Featurizer:
         X = {"train": None, "val": None, "test": None}
         y = {"train": None, "val": None, "test": None}
 
-        # Tokenize spans
-        self.tokenize_spans(spans_by_dataset)
+        for dataset_name, spans in spans_by_dataset.items():  # train, val and test
+            # Tokenize spans
+            self.tokenize_spans(dataset_name, spans)
 
-        for dataset_name, spans in tqdm(spans_by_dataset.items()):  # train, val and test
-            # Create the feature vector
-            feature_vector = self.create_feature_vector(spans)
-
-            # Expand the feature vector
-            feature_vector = self.expand_feature_vector(dataset_name, spans, feature_vector)
-
-            # Create X=inputs and y=labels
-            X[dataset_name] = feature_vector
-            y[dataset_name] = np.array([span["type"] for span in spans])
+            # Create X and y
+            X[dataset_name], y[dataset_name] = self.create_inputs_and_labels_for_spans(dataset_name, spans)
 
         log("The inputs and labels successfully created for train, val and test sets!")
         return X, y

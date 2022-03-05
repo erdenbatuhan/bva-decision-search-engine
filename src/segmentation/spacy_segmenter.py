@@ -48,7 +48,7 @@ class SpacySegmenter(Segmenter):
 
         return [
             {
-                "text": sentence.text,
+                "txt": sentence.text,
                 "start_char": sentence.start_char,
                 "end_char": sentence.end_char,
             }

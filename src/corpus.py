@@ -15,7 +15,11 @@ class Corpus:
 
     CASE_HEADER_TYPE = "Header"
 
-    def __init__(self, annotations_filepath, unlabeled_data_dir):
+    def __init__(self, annotations_filepath, unlabeled_data_dir, sparse_corpus=False):
+        if sparse_corpus:  # Do not load anything for sparse corpus
+            self.train_spans, self.val_spans, self.test_spans = [], [], []
+            return
+        
         # Load labeled data
         self.annotated_documents_by_id, self.annotations_by_document, self.types_by_id = \
             Corpus.load_labeled_data(annotations_filepath)
@@ -111,6 +115,18 @@ class Corpus:
         log("%d unlabeled documents loaded!" % len(unlabeled))
         return unlabeled
 
+    @staticmethod
+    def create_span(plainText, txt, start, end, document_id=None, span_type=None, outcome=None):
+        return {
+            "txt": txt,
+            "document": document_id,
+            "type": span_type,
+            "start": start,
+            "start_normalized": start / len(plainText),
+            "end": end,
+            "outcome": outcome
+        }
+
     def create_span_data(self, annotated_document_ids):
         """
         Gets all sentences assuming every annotation is a sentence
@@ -132,15 +148,11 @@ class Corpus:
                 annotation_start = annotation["start"]
                 annotation_end = annotation["end"]
 
-                document_span_data.append({
-                    "txt": document["plainText"][annotation_start:annotation_end],
-                    "document": document_id,
-                    "type": self.types_by_id[annotation["type"]]["name"],
-                    "start": annotation_start,
-                    "start_normalized": annotation_start / len(document["plainText"]),
-                    "end": annotation_end,
-                    "outcome": document["outcome"]
-                })
+                document_span_data.append(Corpus.create_span(
+                    plainText=document["plainText"], txt=document["plainText"][annotation_start:annotation_end],
+                    start=annotation_start, end=annotation_end, document_id=document_id,
+                    span_type=self.types_by_id[annotation["type"]]["name"], outcome=document["outcome"]
+                ))
 
             # Sort document span data by annotation start
             span_data += sorted(document_span_data, key=lambda span: span["start"])
