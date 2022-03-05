@@ -76,7 +76,7 @@ def test_classifier(classifier, X, y, use_test_set=False):
 
             plot_confusion_matrix(true_labels, predicted_labels,
                                   classes=list(classifier.classes_),
-                                  title=f"{[featurizer_name]} {type(classifier_trained).__name__}")
+                                  title=f"{[featurizer_name]} {type(classifier_trained).__name__} ({dataset_type} set)")
             plt.show()
 
         print("-" * 100)  # Just a line separator
