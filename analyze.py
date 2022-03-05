@@ -12,6 +12,7 @@ from src.segmentation.spacy_segmenter import SpacySegmenter
 from src.segmentation.luima_law_segmenter import LuimaLawSegmenter
 from src.embeddings import Embeddings
 from src.featurization.embeddings_featurizer import EmbeddingsFeaturizer
+from src.utils.sys_utils import create_dir
 from src.utils.logging_utils import log
 
 # Constants
@@ -81,6 +82,9 @@ def analyze(bva_decision_filepath):
 if __name__ == "__main__":
     assert len(sys.argv) == 2, "Pass the path to the text file containing a BVA decision => " \
                                "$ python analyze.py <path to txt file>"
+
+    # Create the out directory
+    create_dir(OUT_DIR)
 
     # Run analyze
     analyze(bva_decision_filepath=sys.argv[1])
