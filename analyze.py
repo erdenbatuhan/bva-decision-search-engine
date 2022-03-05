@@ -4,9 +4,8 @@
 """
 
 import sys
-import numpy as np
-import pandas as pd
 import pickle
+from texttable import Texttable
 
 from src.corpus import Corpus
 from src.segmentation.spacy_segmenter import SpacySegmenter
@@ -19,6 +18,24 @@ from src.utils.logging_utils import log
 OUT_DIR = "./out/"
 EMBEDDINGS_MODEL_FILEPATH = OUT_DIR + "_embeddings_model.bin"
 BEST_CLASSIFIER_FILEPATH = OUT_DIR + "_best_classifier.pkl"
+
+
+def log_results(sentences, predicted_labels):
+    """
+    Logs the results in a beautiful table
+
+    :param sentences: Sentences split
+    :param predicted_labels: Predicted labels for the sentences
+    """
+    table = Texttable()
+
+    table.set_cols_valign(["m", "m"])
+    table.add_rows(
+        [["Sentence", "Predicted Label"]] +
+        [[sentence["txt"], predicted_labels[idx]] for idx, sentence in enumerate(sentences)]
+    )
+
+    log(f"The resulting splits and the predicted labels for them:\n{table.draw()}")
 
 
 def analyze(bva_decision_filepath):
@@ -58,17 +75,7 @@ def analyze(bva_decision_filepath):
     predicted_labels = classifier.predict(X)
 
     # Log the results
-    results_df = pd.DataFrame(data={
-        "Sentence": [sentence["txt"] for sentence in sentences],
-        "Predicted Label": predicted_labels
-    })
-
-    # Set pandas display options
-    pd.set_option("display.expand_frame_repr", False)
-    pd.set_option("max_colwidth", int(np.mean([len(sentence["txt"]) for sentence in sentences])))
-    pd.set_option("display.max_rows", results_df.shape[0] + 1)
-
-    log(f"The resulting splits and the predicted labels for them:\n{results_df}")
+    log_results(sentences, predicted_labels)
 
 
 if __name__ == "__main__":
