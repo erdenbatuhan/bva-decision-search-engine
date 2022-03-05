@@ -123,7 +123,7 @@ class Featurizer:
         feature_vector = self.create_feature_vector(spans)
 
         # Expand the feature vector
-        feature_vector = self.expand_feature_vector(dataset_name, spans, feature_vector)
+        feature_vector = Featurizer.expand_feature_vector(dataset_name, spans, feature_vector)
 
         # Create X=inputs and y=labels
         return feature_vector, np.array([span["type"] for span in spans])
