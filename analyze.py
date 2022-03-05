@@ -32,11 +32,8 @@ def analyze(bva_decision_filepath):
     with open(bva_decision_filepath, encoding="latin-1") as data:
         bva_decision_plain_text = data.read()
 
-    # Initialize a Corpus
-    corpus = Corpus(annotations_filepath="./data/ldsi_w21_curated_annotations_v2.json")
-
     # Sentence-segment BVA decision using Luima segmenter
-    sentences = LuimaLawSegmenter(corpus).generate_sentences(bva_decision_plain_text)
+    sentences = LuimaLawSegmenter(corpus=None).generate_sentences(bva_decision_plain_text)
 
     # Create span data from sentences generated and add it to the Corpus
     spans = [
@@ -48,7 +45,7 @@ def analyze(bva_decision_filepath):
 
     # Load the embeddings model and initialize word embedding featurization
     embeddings = Embeddings(model_filepath=EMBEDDINGS_MODEL_FILEPATH)
-    embeddings_featurizer = EmbeddingsFeaturizer(corpus=corpus,
+    embeddings_featurizer = EmbeddingsFeaturizer(corpus=None,
                                                  tokenization_segmenter=SpacySegmenter(corpus=None, improved=True),
                                                  embeddings_model=embeddings.model)
 
