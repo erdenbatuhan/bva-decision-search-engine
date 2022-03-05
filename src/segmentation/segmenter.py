@@ -226,7 +226,7 @@ class Segmenter:
 
         # Generate Spacy sentences
         generated_sentences_by_document = {
-            document_id: Segmenter.generate_sentences(plain_text)
+            document_id: self.generate_sentences(plain_text)
             for document_id, plain_text in tqdm(self.get_plain_texts_by_document(annotated).items())
         }
 
