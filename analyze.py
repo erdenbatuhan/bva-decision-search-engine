@@ -64,8 +64,8 @@ def analyze(bva_decision_filepath):
     })
 
     # Set pandas display options
-    pd.set_option('display.expand_frame_repr', False)
-    pd.set_option('max_colwidth', int(np.mean([len(sentence["txt"]) for sentence in sentences])))
+    pd.set_option("display.expand_frame_repr", False)
+    pd.set_option("max_colwidth", int(np.mean([len(sentence["txt"]) for sentence in sentences])))
     pd.set_option("display.max_rows", results_df.shape[0] + 1)
 
     log(f"The resulting splits and the predicted labels for them:\n{results_df}")
