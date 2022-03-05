@@ -17,14 +17,15 @@ from src.utils.logging_utils import log
 
 # Constants
 OUT_DIR = "./out/"
-GENERATED_TOKENS_FOR_EMBEDDINGS_FILEPATH = OUT_DIR + "_generated_tokens_for_embeddings.txt"
 EMBEDDINGS_MODEL_FILEPATH = OUT_DIR + "_embeddings_model.bin"
 BEST_CLASSIFIER_FILEPATH = OUT_DIR + "_best_classifier.pkl"
 
 
 def analyze(bva_decision_filepath):
     """
-    Analyzes the performance of the model
+    Makes a prediction using the given BVA decision
+
+    :param bva_decision_filepath: BVA decision to be predicted
     """
 
     # Load the BVA decision
