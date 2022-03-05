@@ -13,6 +13,8 @@ from src.embeddings import Embeddings
 from src.featurization.tfidf_featurizer import TfidfFeaturizer
 from src.featurization.embeddings_featurizer import EmbeddingsFeaturizer
 from src.utils.sys_utils import create_dir
+from src.utils.logging_utils import log
+from src.utils.classification_utils import train_using_featurizers
 
 # Constants
 OUT_DIR = "./out/"
@@ -69,7 +71,7 @@ def preprocess_data(segmenters, generate_new=False):
     Step 3: Preprocessing (Tokenization)
 
     :param segmenters: Sentence segmenters
-    :param generate_new: When set to True, sentences and tokens are generated from scratch. Otherwise, they are loaded.
+    :param generate_new: When set to True, sentences and tokens are generated from scratch. Otherwise, they are loaded
     """
 
     # Initialize the tokenizer
@@ -104,37 +106,41 @@ def train_word_embeddings(train_new=False):
     return embeddings.model
 
 
-def train_classifiers(corpus, segmenters, embeddings_model):
+def train_classifiers(corpus, segmenters, embeddings_model, debug=False):
     """
     Step 5: Training Classifiers
 
     :param corpus: Corpus
     :param segmenters: Sentence segmenters
     :param embeddings_model: The embeddings model trained on the unlabeled corpus
+    :param debug: Whether or not the classifiers are tested (default: False)
+    :return Linear and non-linear classifiers
     """
 
-    X = {"TfidfFeaturizer": None, "EmbeddingsFeaturizer": None}
-    y = {"TfidfFeaturizer": None, "EmbeddingsFeaturizer": None}
-
-    # Initialize the featurizers
+    # Step 5.1: TFIDF Featurization
     tfidf_featurizer = TfidfFeaturizer(corpus, tokenization_segmenter=segmenters["ImprovedSpacySegmenter"])
+    tfidf_featurizer.vectorize()
+
+    # Step 5.2: Word Embedding Featurization
     embeddings_featurizer = EmbeddingsFeaturizer(corpus, tokenization_segmenter=segmenters["ImprovedSpacySegmenter"],
                                                  embeddings_model=embeddings_model)
 
-    # Step 5.1: TFIDF Featurization
-    tfidf_featurizer.vectorize()
-    X["TfidfFeaturizer"], y["TfidfFeaturizer"] = tfidf_featurizer.create_inputs_and_labels()
+    # Step 5.3: Model Training
+    return train_using_featurizers(featurizers={
+        # "TfidfFeaturizer": tfidf_featurizer,  # Uncomment to also use TfidfFeaturizer
+        "EmbeddingsFeaturizer": embeddings_featurizer
+    }, debug=debug)
 
-    # Step 5.2: Word Embedding Featurization
-    X["EmbeddingsFeaturizer"], y["EmbeddingsFeaturizer"] = embeddings_featurizer.create_inputs_and_labels()
 
-
-def analyze_errors():
+def analyze_errors(classifiers):
     """
     Step 6: Error Analysis
+
+    :param classifiers: Linear and non-linear classifiers trained
     """
 
-    pass
+    log(f"Trained classifiers: {str([type(classifier).__name__ for classifier in classifiers])}")
+    log("Please refer to 'train.ipynb' notebook for the detailed error analysis!")
 
 
 def train(annotations_filepath, unlabeled_data_dir):
@@ -149,8 +155,8 @@ def train(annotations_filepath, unlabeled_data_dir):
     segmenters = initialize_segmenters(corpus, debug=False)                 # Step 2: Sentence Segmentation
     preprocess_data(segmenters=segmenters, generate_new=False)              # Step 3: Preprocessing (Tokenization)
     embeddings_model = train_word_embeddings(train_new=False)               # Step 4: Developing Word Embeddings
-    train_classifiers(corpus, segmenters, embeddings_model)                 # Step 5: Training Classifiers
-    analyze_errors()                                                        # Step 6: Error Analysis
+    classifiers = train_classifiers(corpus, segmenters, embeddings_model)   # Step 5: Training Classifiers
+    analyze_errors(classifiers)                                             # Step 6: Error Analysis
 
 
 if __name__ == "__main__":
