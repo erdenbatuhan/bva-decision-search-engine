@@ -84,7 +84,8 @@ def preprocess_data(segmenters, generate_new=False):
     """
 
     # Initialize the tokenizer
-    tokenizer = Tokenizer(segmenters)
+    tokenizer = Tokenizer(sentence_segmenter=segmenters["LuimaLawSegmenter"],
+                          tokenization_segmenter=segmenters["ImprovedSpacySegmenter"])
 
     # Generate or load sentences and tokens
     if generate_new:

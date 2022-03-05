@@ -20,8 +20,9 @@ class Tokenizer:
 
     MIN_NUM_TOKENS_IN_SENTENCE = 5
 
-    def __init__(self, segmenters):
-        self.segmenters = segmenters
+    def __init__(self, sentence_segmenter, tokenization_segmenter):
+        self.sentence_segmenter = sentence_segmenter
+        self.tokenization_segmenter = tokenization_segmenter
 
     @staticmethod
     def count_sentences(sentences_by_document):
@@ -58,7 +59,7 @@ class Tokenizer:
         log("Sentence-segmenting all decisions in the unlabeled corpus using a law-specific segmenter (Luima)..")
 
         # Sentence-segment all decisions in the unlabeled corpus using a law-specific segmenter (Luima)
-        sentences_by_document = self.segmenters["LuimaLawSegmenter"].apply_segmentation(annotated=False, debug=False)
+        sentences_by_document = self.sentence_segmenter.apply_segmentation(annotated=False, debug=False)
 
         # Write generated sentences to file
         with open(self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH, "w") as file:
@@ -115,7 +116,7 @@ class Tokenizer:
         log("Generating tokens from %d sentences in the unlabeled corpus!" %
             Tokenizer.count_sentences(sentences_by_document))
 
-        spacy_segmenter = self.segmenters["ImprovedSpacySegmenter"]  # Improved Spacy segmenter
+        spacy_segmenter = self.tokenization_segmenter  # Improved Spacy segmenter
         spacy_segmenter.nlp.disable_pipes("parser")  # For a faster runtime
 
         # Start the timer
