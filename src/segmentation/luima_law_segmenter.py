@@ -23,7 +23,12 @@ class LuimaLawSegmenter(Segmenter):
         :return: Sentences generated from a plain text by Luima
         """
 
+        # Split text into sentences
         indices = text2sentences(plain_text, offsets=True)
+
+        # CaseHeader Preservation: Merge the first 5 sentences as they construct the CaseHeader when merged
+        indices[0] = (indices[0][0], indices[4][1])  # Replace the end of 0th sentence with the end of 4th sentence
+        del indices[1:5]  # Remove the elements at indices 1, 2, 3 and 4
 
         return [
             {
