@@ -1,5 +1,5 @@
 """
- File:   train_simplified.py
+ File:   train.py
  Author: Batuhan Erden
 
  This script is just a shorter version of "train_detailed.ipynb",
@@ -175,7 +175,7 @@ def train(annotations_filepath, unlabeled_data_dir):
 if __name__ == "__main__":
     assert len(sys.argv) == 3, "Pass the path to the file containing the annotations (e.g. ./data/labeled.json) and " \
                                "the directory containing the unlabeled data (e.g. ./data/unlabeled/) => " \
-                               "$ python train_simplified.py " \
+                               "$ python train.py " \
                                "<path to annotations file> <path to directory containing unlabeled data>"
 
     # Create the out directory
