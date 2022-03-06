@@ -23,7 +23,7 @@ class Embeddings:
         try:
             log("The embeddings model is being loaded..")
             model = fasttext.load_model(self.model_filepath)
-            log("The embeddings model is successfully loaded!")
+            log("The embeddings model successfully loaded!")
         except ValueError:
             log("No embeddings model found!")
 
@@ -36,7 +36,7 @@ class Embeddings:
 
         log("The embeddings model is being saved..")
         self.model.save_model(self.model_filepath)
-        log("The embeddings model is successfully saved!")
+        log("The embeddings model successfully saved!")
 
     def train(self, tokens_filepath, num_epochs=20):
         """
@@ -49,7 +49,7 @@ class Embeddings:
         log("Training the embeddings model for %d epochs.." % num_epochs)
         self.model = fasttext.train_unsupervised(input=tokens_filepath, model="skipgram", dim=100, min_count=3,
                                                  epoch=num_epochs)
-        log("The embeddings model is successfully trained!")
+        log("The embeddings model successfully trained!")
 
         self.save_model()
 

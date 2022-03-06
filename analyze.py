@@ -46,9 +46,14 @@ def analyze(bva_decision_filepath):
     :param bva_decision_filepath: BVA decision to be predicted
     """
 
+    log(f"Loading the BVA decision from {bva_decision_filepath}..")
+
     # Load the BVA decision
     with open(bva_decision_filepath, encoding="latin-1") as data:
         bva_decision_plain_text = data.read()
+
+    log(f"The BVA decision successfully loaded from {bva_decision_filepath}!")
+    log("Sentence-segmenting the BVA decision loaded..")
 
     # Sentence-segment BVA decision using Luima segmenter
     sentences = LuimaLawSegmenter(corpus=None).generate_sentences(bva_decision_plain_text)
@@ -61,22 +66,36 @@ def analyze(bva_decision_filepath):
         for sentence in sentences
     ]
 
+    log("The BVA decision successfully split into sentences!")
+
     # Load the embeddings model and initialize word embedding featurization
     embeddings = Embeddings(model_filepath=EMBEDDINGS_MODEL_FILEPATH)
     embeddings_featurizer = EmbeddingsFeaturizer(corpus=None,
                                                  tokenization_segmenter=SpacySegmenter(corpus=None, improved=True),
                                                  embeddings_model=embeddings.model)
 
+    log("Creating the inputs to be fed into the network..")
+
     # Create the inputs from the sentence-segmented BVA decision
     X, _ = embeddings_featurizer.create_inputs_and_labels_for_spans(dataset_name="analyzed",
                                                                     spans=spans, tokenize=True)
 
-    # Load the best classifier saved and make prediction
+    log("The inputs to be fed into the network successfully created!")
+    log(f"Loading the best classifier from {BEST_CLASSIFIER_FILEPATH}..")
+
+    # Load the best classifier saved
     classifier = pickle.load(open(BEST_CLASSIFIER_FILEPATH, "rb"))
+
+    log(f"The best classifier successfully loaded from {BEST_CLASSIFIER_FILEPATH}!")
+    log("Classifying the given BVA decision..")
+
+    # Make prediction and log the results
     predicted_labels = classifier.predict(X)
 
     # Log the results
     log_results(sentences, predicted_labels)
+
+    log("The given BVA decision successfully classified!")
 
 
 if __name__ == "__main__":
