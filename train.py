@@ -1,9 +1,9 @@
 """
- File:   train.py
- Author: Batuhan Erden
+File:   train.py
+Author: Batuhan Erden
 
- This script is just a shorter version of "train_detailed.ipynb",
- please see "train_detailed.ipynb" notebook for more detailed pipeline.
+This script is just a shorter version of "train_detailed.ipynb",
+please see "train_detailed.ipynb" notebook for more detailed pipeline.
 """
 
 import sys
@@ -39,7 +39,6 @@ def initialize_corpus(annotations_filepath, unlabeled_data_dir):
     :param unlabeled_data_dir: Directory containing the unlabeled data
     :return Corpus initialized
     """
-
     # Initialize the Corpus
     corpus = Corpus(annotations_filepath, unlabeled_data_dir)
     print(corpus)
@@ -56,7 +55,6 @@ def initialize_segmenters(corpus, debug=False):
     :param debug: Whether or not an error analysis is performed for the segmentations (default: False)
     :return: Segmenters
     """
-
     # Initialize the segmenters
     segmenters = {
         # Step 2.1: Standard segmentation analysis
@@ -82,7 +80,6 @@ def preprocess_data(segmenters, generate_new=False):
     :param segmenters: Sentence segmenters
     :param generate_new: When set to True, sentences and tokens are generated from scratch. Otherwise, they are loaded
     """
-
     # Initialize the tokenizer
     tokenizer = Tokenizer(sentence_segmenter=segmenters["LuimaLawSegmenter"],
                           tokenization_segmenter=segmenters["ImprovedSpacySegmenter"])
@@ -105,7 +102,6 @@ def train_word_embeddings(train_new=False):
     :param train_new: When set to True, a new model is trained. Otherwise, the existing one is loaded (default: False)
     :return The embeddings model trained on the unlabeled corpus
     """
-
     # Initialize an embeddings model
     embeddings = Embeddings(model_filepath=EMBEDDINGS_MODEL_FILEPATH)
 
@@ -133,7 +129,6 @@ def train_best_classifier(corpus, segmenters, embeddings_model):
     :param segmenters: Sentence segmenters
     :param embeddings_model: The embeddings model trained on the unlabeled corpus
     """
-
     log("Training and saving the best classifier..")
 
     # Word Embedding Featurization (See the "train_detailed.ipynb" notebook for how to use the TFIDF feature).
@@ -161,7 +156,6 @@ def train(annotations_filepath, unlabeled_data_dir):
     :param annotations_filepath: Path to the file containing the annotations
     :param unlabeled_data_dir: Directory containing the unlabeled data
     """
-
     corpus = initialize_corpus(annotations_filepath, unlabeled_data_dir)    # Step 1: Dataset Splitting
     segmenters = initialize_segmenters(corpus, debug=False)                 # Step 2: Sentence Segmentation
     preprocess_data(segmenters=segmenters, generate_new=False)              # Step 3: Preprocessing (Tokenization)
@@ -183,4 +177,3 @@ if __name__ == "__main__":
 
     # Run train
     train(annotations_filepath=sys.argv[1], unlabeled_data_dir=sys.argv[2])
-

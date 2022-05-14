@@ -1,6 +1,6 @@
 """
- File:   tokenizer.py
- Author: Batuhan Erden
+File:   tokenizer.py
+Author: Batuhan Erden
 """
 
 import random
@@ -32,7 +32,6 @@ class Tokenizer:
         :param sentences_by_document: Sentence-segmented decisions
         :return: The total number of sentences
         """
-
         return sum([len(sentences) for sentences in sentences_by_document.values()])
 
     @staticmethod
@@ -43,7 +42,6 @@ class Tokenizer:
         :param tokens_by_document: Tokens generated
         :return: The total number of tokens
         """
-
         return sum([
             sum([len(sentence_tokens) for sentence_tokens in sentences_with_tokens])
             for sentences_with_tokens in tokens_by_document.values()
@@ -55,7 +53,6 @@ class Tokenizer:
 
         :return: Sentence-segmented decisions
         """
-
         log("Sentence-segmenting all decisions in the unlabeled corpus using a law-specific segmenter (Luima)..")
 
         # Sentence-segment all decisions in the unlabeled corpus using a law-specific segmenter (Luima)
@@ -78,7 +75,6 @@ class Tokenizer:
         :param plain_text: Sentence to be processed
         :return: Tokens generated from the given sentence
         """
-
         tokens = list(spacy_segmenter.nlp(plain_text))  # Generate tokens using Spacy
         worthy_tokens = []
 
@@ -112,7 +108,6 @@ class Tokenizer:
         :param sentences_by_document: Sentence-segmented decisions
         :return: Tokens generated from the sentence-segmented decisions
         """
-
         log("Generating tokens from %d sentences in the unlabeled corpus!" %
             Tokenizer.count_sentences(sentences_by_document))
 
@@ -147,7 +142,6 @@ class Tokenizer:
 
         :return: A tuple containing the sentences and tokens generated
         """
-
         sentences_by_document = self.sentence_segment_decisions_unlabeled()
         tokens_by_document = self.generate_tokens_unlabeled(sentences_by_document)
 
@@ -159,7 +153,6 @@ class Tokenizer:
 
         :return: The existing sentences
         """
-
         log("Loading the existing sentences generated from the unlabeled corpus..")
         sentences_by_document = json.load(open(self.SENTENCE_SEGMENTED_DECISIONS_FILEPATH))
         log("Loaded %d sentences generated from the unlabeled corpus!" %
@@ -173,7 +166,6 @@ class Tokenizer:
 
         :return: The existing tokens
         """
-
         log("Loading the existing tokens generated from the sentence-segmented decisions in the unlabeled corpus..")
         tokens_by_document = json.load(open(self.GENERATED_TOKENS_FILEPATH))
         log("Loaded %d tokens generated from the sentence-segmented decisions in the unlabeled corpus!" %
@@ -187,7 +179,6 @@ class Tokenizer:
 
         :return: A tuple containing the existing sentences and tokens loaded
         """
-
         return self.load_sentences_unlabeled(), self.load_tokens_unlabeled()
 
     def write_tokens_to_file_for_embeddings(self, sentences_by_document, tokens_by_document, filepath,
@@ -203,7 +194,6 @@ class Tokenizer:
         :param randomized: Whether or not the sentences are randomized (default: True)
         :param random_seed: Random seed used to randomize the inputs (default: 42)
         """
-
         # Flatten the sentences
         log("Flattening the sentences..")
 
@@ -232,4 +222,3 @@ class Tokenizer:
 
         log("Tokens generated from %d of %d sentences successfully written to %s!" %
             (len(tokens_text.split("\n")), Tokenizer.count_sentences(sentences_by_document), filepath))
-

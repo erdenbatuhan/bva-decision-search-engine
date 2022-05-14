@@ -17,7 +17,6 @@ class Embeddings:
 
         :return: The existing embeddings model
         """
-
         model = None
 
         try:
@@ -33,7 +32,6 @@ class Embeddings:
         """
         Saves the embeddings model
         """
-
         log("The embeddings model is being saved..")
         self.model.save_model(self.model_filepath)
         log("The embeddings model successfully saved!")
@@ -45,7 +43,6 @@ class Embeddings:
         :param tokens_filepath: The path to the file containing the tokens
         :param num_epochs: The number of epochs
         """
-
         log("Training the embeddings model for %d epochs.." % num_epochs)
         self.model = fasttext.train_unsupervised(input=tokens_filepath, model="skipgram", dim=100, min_count=3,
                                                  epoch=num_epochs)
@@ -60,6 +57,4 @@ class Embeddings:
         :param words: Words to get the nearest neighbor information for
         :return: nearest neighbors of each word given
         """
-
         return {word: self.model.get_nearest_neighbors(word, k=self.NUM_NEIGHBORS_CONSIDERED_CLOSE) for word in words}
-

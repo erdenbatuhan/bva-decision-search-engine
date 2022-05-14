@@ -1,6 +1,6 @@
 """
- File:   type_utils.py
- Author: Batuhan Erden
+File:   type_utils.py
+Author: Batuhan Erden
 """
 
 import datetime
@@ -16,7 +16,6 @@ def is_number(text):
     :param text: Text to be checked if it is a number
     :return: Whether or not the string can be interpreted as a number
     """
-
     try:
         int(text)
         return True
@@ -24,16 +23,16 @@ def is_number(text):
         return False
 
 
-# referenced from: https://stackoverflow.com/questions/25341945/check-if-string-has-date-any-format
 def is_date(text, fuzzy=True):
     """
     Return whether or not the string can be interpreted as a date
+
+    Referenced from: https://stackoverflow.com/questions/25341945/check-if-string-has-date-any-format
 
     :param text: Text to be checked if it is a date
     :param fuzzy: When set to True, unknown tokens are ignored
     :return: Whether or not the string can be interpreted as a date
     """
-
     try:
         parse(text, fuzzy=fuzzy)
 
@@ -44,4 +43,3 @@ def is_date(text, fuzzy=True):
         return True
     except Exception:
         return False
-

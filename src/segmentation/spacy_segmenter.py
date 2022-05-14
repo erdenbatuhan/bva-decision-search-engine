@@ -1,6 +1,6 @@
 """
- File:   spacy_segmenter.py
- Author: Batuhan Erden
+File:   spacy_segmenter.py
+Author: Batuhan Erden
 """
 
 import spacy
@@ -29,7 +29,6 @@ class SpacySegmenter(Segmenter):
         (2) Handles commas and semicolons after closed parenthesis: (2004), and (2004);
         (3) Handles the footer underscores
         """
-
         # Handle special legal words (1) and commas and semicolons after closed parenthesis (2)
         for word in [
             "Vet. App.", "Fed. Cir.", "Fed. Reg.", "Pub. L. No.", "DOCKET NO.", ")DATE))", "non-Federal", "Cf. 38"
@@ -45,7 +44,6 @@ class SpacySegmenter(Segmenter):
         :param plain_text: The plain text
         :return: Sentences generated from a plain text by Spacy
         """
-
         return [
             {
                 "txt": sentence.text,
@@ -54,4 +52,3 @@ class SpacySegmenter(Segmenter):
             }
             for sentence in self.nlp(plain_text).sents
         ]
-

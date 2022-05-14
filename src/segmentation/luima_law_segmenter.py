@@ -1,6 +1,6 @@
 """
- File:   luima_law_segmenter.py
- Author: Batuhan Erden
+File:   luima_law_segmenter.py
+Author: Batuhan Erden
 """
 
 from luima_sbd.sbd_utils import text2sentences
@@ -22,7 +22,6 @@ class LuimaLawSegmenter(Segmenter):
         :param plain_text: The plain text
         :return: Sentences generated from a plain text by Luima
         """
-
         # Split text into sentences
         indices = text2sentences(plain_text, offsets=True)
 
@@ -38,4 +37,3 @@ class LuimaLawSegmenter(Segmenter):
             }
             for (start_char, end_char) in indices
         ]
-

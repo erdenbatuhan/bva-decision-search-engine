@@ -1,6 +1,6 @@
 """
- File:   tfidf_featurizer.py
- Author: Batuhan Erden
+File:   tfidf_featurizer.py
+Author: Batuhan Erden
 """
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -22,7 +22,6 @@ class TfidfFeaturizer(Featurizer):
         """
         Vectorizes the training data
         """
-
         log("Initializing a TfidfVectorizer and fitting it on the training data..")
 
         self.tfidf_vectorizer = TfidfVectorizer(tokenizer=self.tokenize,
@@ -43,11 +42,8 @@ class TfidfFeaturizer(Featurizer):
         :param spans: Spans used to create the feature vector
         :return: The feature vector created
         """
-
         span_texts = [span["txt"] for span in spans]
         return self.tfidf_vectorizer.transform(span_texts).toarray()
 
     def __str__(self):
-        # The feature names of the vectorizer
-        return str(self.tfidf_vectorizer.get_feature_names())
-
+        return str(self.tfidf_vectorizer.get_feature_names())  # The feature names of the vectorizer

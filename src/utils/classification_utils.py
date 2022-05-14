@@ -1,6 +1,6 @@
 """
- File:   classification_utils.py
- Author: Batuhan Erden
+File:   classification_utils.py
+Author: Batuhan Erden
 """
 
 import numpy as np
@@ -21,7 +21,6 @@ def plot_confusion_matrix(true_labels, predicted_labels, classes, title=None, cm
     :param title: Title of the plot (default: None)
     :param cmap: Color map of the plot (default: plt.cm.Blues)
     """
-
     cm = confusion_matrix(true_labels, predicted_labels)
 
     fig, ax = plt.subplots(figsize=(8, 8))
@@ -60,7 +59,6 @@ def test_classifier(classifier, X, y, use_test_set=False):
     :param use_test_set: When set to True, the test set is used for validation.
                          Otherwise, the val set is used (default: False)
     """
-
     # Train classifiers on train set and validate on val set
     for featurizer_name in X:
         # Train on train set
@@ -80,4 +78,3 @@ def test_classifier(classifier, X, y, use_test_set=False):
             plt.show()
 
         print("-" * 100)  # Just a line separator
-

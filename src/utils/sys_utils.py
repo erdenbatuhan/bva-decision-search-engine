@@ -1,6 +1,6 @@
 """
- File:   sys_utils.py
- Author: Batuhan Erden
+File:   sys_utils.py
+Author: Batuhan Erden
 """
 
 import os
@@ -14,8 +14,6 @@ def create_dir(dir_name):
 
     :param dir_name: The name of the directory
     """
-
     if not os.path.exists(dir_name):
         log("Creating a directory named %s.." % dir_name)
         os.mkdir(dir_name)
-

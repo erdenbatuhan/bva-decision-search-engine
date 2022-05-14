@@ -1,6 +1,6 @@
 """
- File:   corpus.py
- Author: Batuhan Erden
+File:   corpus.py
+Author: Batuhan Erden
 """
 
 import json
@@ -39,7 +39,6 @@ class Corpus:
         :param annotations: All annotations
         :return: Annotated documents by ID
         """
-
         annotated_documents_by_id = {}
 
         for annotation in annotations:
@@ -56,7 +55,6 @@ class Corpus:
         :param annotations: All annotations
         :return: Annotations by document
         """
-
         annotations_by_document = {}
 
         for annotation in annotations:
@@ -77,7 +75,6 @@ class Corpus:
         :param annotations_filepath: Path to the file containing the annotations
         :return: A tuple containing the data (annotated_documents_by_id, annotations_by_document, types_by_id)
         """
-
         log("Loading the labeled data..")
 
         # Load the labeled data
@@ -103,7 +100,6 @@ class Corpus:
         :param unlabeled_data_dir: Directory containing the unlabeled data
         :return: Unlabeled data
         """
-
         log("Loading the unlabeled data..")
         unlabeled = {}
 
@@ -134,7 +130,6 @@ class Corpus:
         :param annotated_document_ids: Annotated document IDs used to create span data
         :return: Span data created from the documents given
         """
-
         span_data = []
 
         # Create span data for each annotated document
@@ -165,7 +160,6 @@ class Corpus:
 
         :return: Train, validation and test spans
         """
-
         # Split data in a balanced way
         document_ids_train, document_ids_val, document_ids_test = data_utils.split_data_balanced(
             inputs=self.annotated_documents_by_id, type_key="outcome", val_test_size=.1)
@@ -188,7 +182,6 @@ class Corpus:
         :param spans: Spans given
         :return: Distinct documents given spans
         """
-
         return list(set([span["document"] for span in spans]))
 
     def get_plain_texts_by_annotated_document(self, spans):
@@ -198,7 +191,6 @@ class Corpus:
         :param spans: Spans (train, test or validation)
         :return: The plain text of each annotated document
         """
-
         return {
             document_id: self.annotated_documents_by_id[document_id]["plainText"]
             for document_id in Corpus.get_documents_split(spans)
@@ -224,4 +216,3 @@ class Corpus:
                "===========================================================================\n" + \
                "Validation set: %s\nTest set: %s" % (val_documents, test_documents) + "\n" + \
                "==========================================================================="
-

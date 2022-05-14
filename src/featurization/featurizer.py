@@ -1,6 +1,6 @@
 """
- File:   featurizer.py
- Author: Batuhan Erden
+File:   featurizer.py
+Author: Batuhan Erden
 """
 
 import numpy as np
@@ -24,7 +24,6 @@ class Featurizer:
         :param plain_text: Plain text to be tokenized
         :return: Tokens generated using the specified segmenter and plain text
         """
-
         return Tokenizer.tokenize(self.tokenization_segmenter, plain_text)
 
     def tokenize_spans(self, dataset_name, spans):
@@ -34,7 +33,6 @@ class Featurizer:
         :param dataset_name: The name describing if it is the train, val or test data
         :param spans: Spans used to create the additional features
         """
-
         log("Adding tokens to the %s spans.." % dataset_name)
 
         for span in tqdm(spans):
@@ -59,7 +57,6 @@ class Featurizer:
         :param spans: Spans used to create the additional features
         :return: The feature vector expansions
         """
-
         # Number of tokens across all sentences for given spans and train spans
         num_tokens = np.array([len(span["tokens"]) for span in spans])
         num_tokens_train = np.array([len(span["tokens"]) for span in self.corpus.train_spans]) \
@@ -82,7 +79,6 @@ class Featurizer:
         :param feature_vector: Existing feature vector
         :return: The new feature vector with the appended additional features
         """
-
         log("Expanding the feature vector (%s).." % dataset_name)
 
         shape_before_expansion = np.array(feature_vector.shape)
@@ -114,7 +110,6 @@ class Featurizer:
                          see "analyze.py" (default: False)
         :return: X and y for given spans
         """
-
         # Tokenize spans (Only used during testing, see "analyze.py")
         if tokenize:
             self.tokenize_spans(dataset_name, spans)
@@ -134,7 +129,6 @@ class Featurizer:
 
         :return: X and y for train, val and test sets
         """
-
         log("Creating the inputs and labels for train, val and test sets..")
 
         spans_by_dataset = {
@@ -164,7 +158,6 @@ class Featurizer:
         :param y: Labels
         :return Shape analysis output
         """
-
         shape_analysis_output_lines = [f"{type(self).__name__} Shapes"]
 
         for dataset_type in X:
@@ -174,4 +167,3 @@ class Featurizer:
             )
 
         return "\n".join(shape_analysis_output_lines)
-

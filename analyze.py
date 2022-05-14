@@ -1,6 +1,6 @@
 """
- File:   analyze.py
- Author: Batuhan Erden
+File:   analyze.py
+Author: Batuhan Erden
 """
 
 import sys
@@ -45,7 +45,6 @@ def analyze(bva_decision_filepath):
 
     :param bva_decision_filepath: BVA decision to be predicted
     """
-
     log(f"Loading the BVA decision from {bva_decision_filepath}..")
 
     # Load the BVA decision
@@ -107,4 +106,3 @@ if __name__ == "__main__":
 
     # Run analyze
     analyze(bva_decision_filepath=sys.argv[1])
-

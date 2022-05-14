@@ -1,6 +1,6 @@
 """
- File:   embeddings_featurizer.py
- Author: Batuhan Erden
+File:   embeddings_featurizer.py
+Author: Batuhan Erden
 """
 
 import numpy as np
@@ -24,9 +24,7 @@ class EmbeddingsFeaturizer(Featurizer):
         :param spans: Spans used to create the feature vector
         :return: The feature vector created
         """
-
         return np.array([
             np.mean([self.embeddings_model[token] for token in span["tokens"]], axis=0)
             for span in spans
         ])
-

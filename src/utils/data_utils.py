@@ -1,6 +1,6 @@
 """
- File:   data_utils.py
- Author: Batuhan Erden
+File:   data_utils.py
+Author: Batuhan Erden
 """
 
 import random
@@ -16,7 +16,6 @@ def split_data_balanced(inputs, type_key, val_test_size=.1, random_seed=42):
     :param random_seed: Random seed used to randomize the inputs (default: 42)
     :return: Tuple containing the training, validation and test data
     """
-
     distinct_types = set([item[type_key] for _, item in inputs.items()])
     inputs_by_type = {distinct_type: [] for distinct_type in distinct_types}
 
@@ -50,7 +49,6 @@ def assert_balanced_split(data_tuple, identifier_key, type_key):
     :param identifier_key: Key of the ID attribute (e.g. document)
     :param type_key: Key of the type attribute (Data is balanced using this key) (e.g. outcome)
     """
-
     distinct_types = set([item[type_key] for item in data_tuple[0]])
 
     for data in data_tuple:
@@ -66,4 +64,3 @@ def assert_balanced_split(data_tuple, identifier_key, type_key):
                 len(distinct_type_counts) == 2 and
                 abs(distinct_type_counts[1] - distinct_type_counts[0]) <= 1
         ), "The split is not balanced!"
-
