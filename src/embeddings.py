@@ -1,3 +1,8 @@
+"""
+ File:   embeddings.py
+ Author: Batuhan Erden
+"""
+
 import fasttext
 
 from src.utils.logging_utils import log
